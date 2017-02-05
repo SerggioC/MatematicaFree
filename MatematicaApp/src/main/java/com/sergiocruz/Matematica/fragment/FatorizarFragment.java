@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -24,6 +25,7 @@ import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
+import android.text.style.StyleSpan;
 import android.text.style.SuperscriptSpan;
 import android.text.style.UnderlineSpan;
 import android.util.TypedValue;
@@ -35,6 +37,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -45,18 +49,22 @@ import android.widget.Toast;
 
 import com.sergiocruz.Matematica.R;
 import com.sergiocruz.Matematica.activity.AboutActivity;
+import com.sergiocruz.Matematica.activity.MainActivity;
 import com.sergiocruz.Matematica.activity.SettingsActivity;
 import com.sergiocruz.Matematica.helper.CreateCardView;
 import com.sergiocruz.Matematica.helper.MenuHelper;
 import com.sergiocruz.Matematica.helper.SwipeToDismissTouchListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 import static android.widget.LinearLayout.HORIZONTAL;
+import static com.sergiocruz.Matematica.R.array.f_colors_xml;
 import static com.sergiocruz.Matematica.R.string.fatorizar_btn;
 import static com.sergiocruz.Matematica.fragment.MMCFragment.CARD_TEXT_SIZE;
 import static java.lang.Long.parseLong;
@@ -76,7 +84,10 @@ public class FatorizarFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     Activity mActivity;
-    //AsyncTask params <Input datatype, progress update datatype, return datatype>
+    ArrayList<Integer> fColors;
+    /*
+    *   AsyncTask params <Input datatype, progress update datatype, return datatype>
+    * */
     AsyncTask<Long, Float, ArrayList<ArrayList<Long>>> BG_Operation = new BackGroundOperation();
     Button button;
     float scale;
@@ -128,6 +139,54 @@ public class FatorizarFragment extends Fragment {
             factoresPrimos.add(number);
         }
         return factoresPrimos;
+    }
+
+    public static void expandIt(final View v) {
+        v.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        final int targetHeight = v.getMeasuredHeight();
+        // Older versions of android (pre API 21) cancel animations for views with a height of 0.
+        v.getLayoutParams().height = 1;
+        v.setVisibility(View.VISIBLE);
+        Animation a = new Animation() {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                v.getLayoutParams().height = interpolatedTime == 1
+                        ? LinearLayout.LayoutParams.WRAP_CONTENT
+                        : (int) (targetHeight * interpolatedTime);
+                v.requestLayout();
+            }
+
+            @Override
+            public boolean willChangeBounds() {
+                return true;
+            }
+        };
+        // 1dp/ms
+        a.setDuration((int) (targetHeight / v.getContext().getResources().getDisplayMetrics().density));
+        v.startAnimation(a);
+    }
+
+    public static void collapseIt(final View v) {
+        final int initialHeight = v.getMeasuredHeight();
+        Animation a = new Animation() {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                if (interpolatedTime == 1) {
+                    v.setVisibility(View.GONE);
+                } else {
+                    v.getLayoutParams().height = initialHeight - (int) (initialHeight * interpolatedTime);
+                    v.requestLayout();
+                }
+            }
+
+            @Override
+            public boolean willChangeBounds() {
+                return true;
+            }
+        };
+        // 1dp/ms
+        a.setDuration((int) (initialHeight / v.getContext().getResources().getDisplayMetrics().density));
+        v.startAnimation(a);
     }
 
     private ArrayList<ArrayList<Long>> getTabelaFatoresPrimos(long number) {
@@ -204,6 +263,15 @@ public class FatorizarFragment extends Fragment {
         mActivity = getActivity();
         scale = mActivity.getResources().getDisplayMetrics().density;
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
+        int[] f_colors = mActivity.getResources().getIntArray(f_colors_xml);
+        fColors = new ArrayList<>();
+        for (int f_color : f_colors) fColors.add(f_color);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        MainActivity.getAds();
     }
 
     @Override
@@ -215,7 +283,6 @@ public class FatorizarFragment extends Fragment {
         inflater.inflate(R.menu.menu_sub_main, menu);
         inflater.inflate(R.menu.menu_help_fatorizar, menu);
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -251,7 +318,6 @@ public class FatorizarFragment extends Fragment {
         }
         return super.onOptionsItemSelected(item);
     }
-
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -426,7 +492,7 @@ public class FatorizarFragment extends Fragment {
 
     }
 
-    void createCardViewLayout(Long number, final ViewGroup history, String str_results, String str_divisores, SpannableStringBuilder ssb_fatores, String str_fact_exp, Boolean hasExpoentes) {
+    void createCardViewLayout(Long number, final ViewGroup history, String str_results, SpannableStringBuilder str_divisores, SpannableStringBuilder ssb_fatores, SpannableStringBuilder str_fact_exp, Boolean hasExpoentes) {
 
         //criar novo cardview
         final CardView cardview = new CardView(mActivity);
@@ -529,6 +595,12 @@ public class FatorizarFragment extends Fragment {
             SpannableStringBuilder ssb_str_divisores = new SpannableStringBuilder(str_divisores);
             ssb_str_divisores.setSpan(new RelativeSizeSpan(0.9f), ssb_str_divisores.length() - str_divisores.length(), ssb_str_divisores.length(), SPAN_EXCLUSIVE_EXCLUSIVE);
             textView_divisores.setText(ssb_str_divisores);
+
+
+            //textView_divisores.setText(str_divisores);
+
+
+
             textView_divisores.setTag(R.id.texto, "texto");
 
             ll_vertical_divisores.addView(textView_divisores);
@@ -565,19 +637,20 @@ public class FatorizarFragment extends Fragment {
                 isExpanded[0] = false;
             }
 
-
             explainLink.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
+                    View explView = ((CardView) view.getParent().getParent().getParent()).findViewWithTag("ll_vertical_expl");
                     if (!isExpanded[0]) {
                         ((TextView) view).setText(ssb_hide_expl);
-                        ((CardView) view.getParent().getParent().getParent()).findViewWithTag("ll_vertical_expl").setVisibility(View.VISIBLE);
+                        //explView.setVisibility(View.VISIBLE);
+                        expandIt(explView);
                         isExpanded[0] = true;
 
                     } else if (isExpanded[0]) {
                         ((TextView) view).setText(ssb_show_expl);
-                        ((CardView) view.getParent().getParent().getParent()).findViewWithTag("ll_vertical_expl").setVisibility(View.GONE);
+                        //explView.setVisibility(View.GONE);
+                        collapseIt(explView);
                         isExpanded[0] = false;
                     }
                 }
@@ -795,6 +868,7 @@ public class FatorizarFragment extends Fragment {
                 String str_divisores = "";
                 SpannableStringBuilder ssb_fatores;
 
+
                 if (sizeList == 1) {
                     str_fatores = resultadosDivisao.get(0) + " " + getString(R.string.its_a_prime);
                     ssb_fatores = new SpannableStringBuilder(str_fatores);
@@ -808,30 +882,56 @@ public class FatorizarFragment extends Fragment {
                     Long lastItem = fatoresPrimos.get(0);
                     String str_fact_expanded = "";
 
+                    Collections.shuffle(fColors);
+                    SpannableStringBuilder ssb_fact_expanded = new SpannableStringBuilder();
+                    int colorIndex = 0;
+
                     //TreeMap
                     LinkedHashMap<String, Integer> dataset = new LinkedHashMap<>();
 
                     //Contar os expoentes
                     for (int i = 0; i < fatoresPrimos.size(); i++) {
-                        str_fact_expanded += fatoresPrimos.get(i) + "×";
+                        Long fatori = fatoresPrimos.get(i);
+                        if (lastItem != fatori) {
+                            colorIndex++;
+                        }
+
+                        String fi = fatori.toString();
+                        ssb_fact_expanded.append(fi);
+                        ssb_fact_expanded.setSpan(new ForegroundColorSpan(fColors.get(colorIndex)),
+                                ssb_fact_expanded.length() - fi.length(), ssb_fact_expanded.length(),
+                                SPAN_EXCLUSIVE_EXCLUSIVE);
+                        ssb_fact_expanded.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
+                                ssb_fact_expanded.length() - fi.length(), ssb_fact_expanded.length(),
+                                SPAN_EXCLUSIVE_EXCLUSIVE);
+                        ssb_fact_expanded.append("×");
+                        str_fact_expanded += fatori + "×";
+
                         if (i == 0) {
                             dataset.put(String.valueOf(fatoresPrimos.get(0)), 1);
-                        } else if (fatoresPrimos.get(i).equals(lastItem) && i > 0) {
+                        } else if (fatori.equals(lastItem) && i > 0) {
                             hasExpoentes = true;
                             counter++;
-                            dataset.put(String.valueOf(fatoresPrimos.get(i)), counter);
-                        } else if (!fatoresPrimos.get(i).equals(lastItem) && i > 0) {
+                            dataset.put(String.valueOf(fatori), counter);
+                        } else if (!fatori.equals(lastItem) && i > 0) {
                             counter = 1;
-                            dataset.put(String.valueOf(fatoresPrimos.get(i)), counter);
+                            dataset.put(String.valueOf(fatori), counter);
                         }
-                        lastItem = fatoresPrimos.get(i);
+                        lastItem = fatori;
                     }
+                    ssb_fact_expanded.delete(ssb_fact_expanded.length()-1,ssb_fact_expanded.length());
 
                     str_fact_expanded = str_fact_expanded.substring(0, str_fact_expanded.length() - 1);
 
                     ssb_fatores = new SpannableStringBuilder(str_fatores);
 
                     int value_length;
+                    colorIndex = 0;
+
+                    final Set<Map.Entry<String, Integer>> mapValues = dataset.entrySet();       // Confusão para sacar o último elemento
+                    final Map.Entry<String, Integer>[] test = new Map.Entry[mapValues.size()];  //(fator primo)
+                    mapValues.toArray(test);                                                    //
+                    int lastkey = Integer.parseInt(test[0].getKey());                           //
 
                     Iterator iterator = dataset.entrySet().iterator();
 
@@ -839,14 +939,28 @@ public class FatorizarFragment extends Fragment {
                     while (iterator.hasNext()) {
                         Map.Entry pair = (Map.Entry) iterator.next();
 
+                        if (lastkey != Integer.parseInt(pair.getKey().toString())) {
+                            colorIndex++;
+                        }
+
                         if (Integer.parseInt(pair.getValue().toString()) == 1) {
                             //Expoente 1
                             ssb_fatores.append(pair.getKey().toString());
+                            ssb_fatores.setSpan(new ForegroundColorSpan(fColors.get(colorIndex)),
+                                    ssb_fatores.length() - pair.getKey().toString().length(), ssb_fatores.length(),
+                                    SPAN_EXCLUSIVE_EXCLUSIVE);
+
 
                         } else if (Integer.parseInt(pair.getValue().toString()) > 1) {
-                            //Expoente superior a 1
+                            //Expoente superior a 1 // pair.getkey = fator; pair.getvalue = expoente
+
+                            ssb_fatores.append(pair.getKey().toString());
+                            ssb_fatores.setSpan(new ForegroundColorSpan(fColors.get(colorIndex)),
+                                    ssb_fatores.length() - pair.getKey().toString().length(), ssb_fatores.length(),
+                                    SPAN_EXCLUSIVE_EXCLUSIVE);
+
                             value_length = pair.getValue().toString().length();
-                            ssb_fatores.append(pair.getKey().toString() + pair.getValue().toString());
+                            ssb_fatores.append(pair.getValue().toString());
                             ssb_fatores.setSpan(new SuperscriptSpan(), ssb_fatores.length() - value_length, ssb_fatores.length(), SPAN_EXCLUSIVE_EXCLUSIVE);
                             ssb_fatores.setSpan(new RelativeSizeSpan(0.8f), ssb_fatores.length() - value_length, ssb_fatores.length(), SPAN_EXCLUSIVE_EXCLUSIVE);
                         }
@@ -854,21 +968,49 @@ public class FatorizarFragment extends Fragment {
                         if (iterator.hasNext()) {
                             ssb_fatores.append("×");
                         }
+                        lastkey = Integer.parseInt(pair.getKey().toString());
 
                         iterator.remove(); // avoids a ConcurrentModificationException
                     }
 
+                    SpannableStringBuilder ssb_divisores = new SpannableStringBuilder();
+                    colorIndex = 0;
+                    Long currentLong = fatoresPrimos.get(0);
                     for (int i = 0; i < sizeList - 1; i++) {
-                        str_divisores += String.valueOf(fatoresPrimos.get(i)) + "\n";
+                        Long fator_i = fatoresPrimos.get(i);
+                        if (currentLong != fator_i) {
+                            colorIndex++;
+                        }
+                        currentLong = fator_i;
+
+                        String fa = fator_i.toString() + "\n";
+                        ssb_divisores.append(fa);
+                        ssb_divisores.setSpan(new ForegroundColorSpan(fColors.get(colorIndex)),
+                                ssb_divisores.length() - fa.length(), ssb_divisores.length(),
+                                SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                        str_divisores += String.valueOf(fator_i) + "\n";
+
                     }
-                    str_divisores += String.valueOf(fatoresPrimos.get(sizeList - 1));
+                    str_divisores += String.valueOf(fatoresPrimos.get(sizeList - 1)); //estava com strings simples aqui
+
+                    Long fator_i = fatoresPrimos.get(sizeList - 1);
+                    if (currentLong != fator_i) {
+                        colorIndex++;
+                    }
+                    ssb_divisores.append(String.valueOf(fator_i));
+                    ssb_divisores.setSpan(new ForegroundColorSpan(fColors.get(colorIndex)),
+                            ssb_divisores.length() - fator_i.toString().length(), ssb_divisores.length(),
+                            SPAN_EXCLUSIVE_EXCLUSIVE);
+                    ssb_divisores.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0, ssb_divisores.length(), SPAN_EXCLUSIVE_EXCLUSIVE);
+
 
                     for (int i = 0; i < resultadosDivisao.size() - 1; i++) {
                         str_results += String.valueOf(resultadosDivisao.get(i)) + "\n";
                     }
                     str_results += String.valueOf(resultadosDivisao.get(resultadosDivisao.size() - 1));
 
-                    createCardViewLayout(resultadosDivisao.get(0), history, str_results, str_divisores, ssb_fatores, str_fact_expanded, hasExpoentes);
+                    createCardViewLayout(resultadosDivisao.get(0), history, str_results, ssb_divisores, ssb_fatores, ssb_fact_expanded, hasExpoentes);
                 }
 
                 progressBar.setVisibility(View.GONE);
@@ -981,8 +1123,8 @@ public class FatorizarFragment extends Fragment {
                         str_results += String.valueOf(resultadosDivisao.get(i)) + "\n";
                     }
                     str_results += String.valueOf(resultadosDivisao.get(resultadosDivisao.size() - 1));
-
-                    createCardViewLayout(resultadosDivisao.get(0), history, str_results, str_divisores, ssb_fatores, str_fact_expanded, hasExpoentes);
+//TODO err
+                    //createCardViewLayout(resultadosDivisao.get(0), history, str_results, str_divisores, ssb_fatores, str_fact_expanded, hasExpoentes);
                 }
 
                 progressBar.setVisibility(View.GONE);

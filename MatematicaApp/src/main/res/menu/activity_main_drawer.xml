@@ -31,6 +31,10 @@
         android:id="@+id/nav_prime_table"
         android:icon="@mipmap/ic_primes"
         android:title="@string/tabela_primos"/>
+    <item
+        android:id="@+id/nav_primorial"
+        android:icon="@mipmap/ic_primes"
+        android:title="@string/nav_primorial"/>
 
     <item android:title="@string/mais">
         <menu>

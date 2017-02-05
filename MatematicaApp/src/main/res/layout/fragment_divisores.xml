@@ -1,13 +1,30 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context="com.sergiocruz.Matematica.fragment.DivisoresFragment">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.sergiocruz.Matematica.fragment.DivisoresFragment">
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        ads:adSize="SMART_BANNER"
+        ads:adUnitId="@string/banner_ad_unit_id"
+        >
+    </com.google.android.gms.ads.AdView>
 
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_above="@id/adView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -60,10 +77,10 @@
                             android:layout_height="@dimen/edittext_height"
                             android:layout_gravity="center"
                             android:background="@drawable/edittextstyle"
+                            android:gravity="center"
                             android:hint="@string/introduzir_numero"
                             android:inputType="number"
                             android:maxLines="1"
-                            android:gravity="center"
                             android:textAlignment="center"/>
 
                         <Button
@@ -94,10 +111,10 @@
                             android:id="@+id/cancelTask"
                             android:layout_width="29dp"
                             android:layout_height="29dp"
-                            android:layout_marginRight="4dp"
-                            android:layout_centerVertical="true"
                             android:layout_alignParentEnd="true"
                             android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="4dp"
                             android:src="@drawable/stop_button"
                             android:visibility="gone"/>
                     </RelativeLayout>
@@ -126,4 +143,4 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
-</FrameLayout>
+</RelativeLayout>

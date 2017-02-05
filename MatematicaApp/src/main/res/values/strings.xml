@@ -1,11 +1,13 @@
 <resources>
+    <string name="banner_ad_unit_id" translatable="false">ca-app-pub-5891836101673362/8926080338</string>
+    <string name="aplication_id" translatable="false">ca-app-pub-5891836101673362~4534736733</string>
 
     <string name="app_name" translatable="false">Matemática Free</string>
-    <string name="app_version_name" translatable="false">2.9</string>
+    <string name="app_version_name" translatable="false">2.9.1</string>
 
     <string name="app_long_description">Matemática: Prime Number Tools Free v</string>
     <string name="app_version_description">App version:</string>
-    <string name="app_version_date">January 2017</string>
+    <string name="app_version_date">February 2017</string>
 
     <string name="app_long_description_PRO" translatable="false">Matemática: Prime Number Tools PRO</string>
 
@@ -37,6 +39,7 @@
         <item>@string/factorize</item>
         <item>@string/divisors</item>
         <item>@string/tabela_primos</item>
+        <item>@string/nav_primorial</item>
     </string-array>
 
     <string name="app_email" translatable="false">mailto:sergiocrz@gmail.com</string>
@@ -181,8 +184,12 @@
     <string name="os_fatores">factors</string>
     <string name="getPro">Get full color detailed explanations on Pro version</string>
     <string name="getProFeature">Get this feaure and many more on PRO version</string>
-    <string name="nav_buy_pro">Buy PRO version</string>
+    <string name="nav_buy_pro">Get PRO version without ads</string>
     <string name="adSubtitle">Click here to check it out on PlayStore</string>
+    <string name="calculate_primorial_title">Calculate Primorial of a number P#</string>
+    <string name="action_ajuda_primorial">How to calculate P#?</string>
+    <string name="help_text_primorial">In mathematics, and more particularly in number theory, primorial is a function from natural numbers to natural numbers similar to the factorial function, but rather than successively multiplying positive integers, only prime numbers are multiplied.</string>
+    <string name="nav_primorial">Calculate Primorial P#</string>
 
 
     <item name="texto" type="id"/>

@@ -15,6 +15,7 @@ import com.sergiocruz.Matematica.R;
 import java.util.ArrayList;
 
 import static com.sergiocruz.Matematica.R.id.history;
+import static com.sergiocruz.Matematica.fragment.HomeFragment.mActivity;
 
 /*****
  * Project Matematica
@@ -55,16 +56,18 @@ public class MenuHelper {
         if (textViews_withTAG_texto.size() > 0) {
             String text_fromTextViews_final = "";
             for (int i = 0; i < textViews_withTAG_texto.size(); i++) {
-                String text_fromTextView = ((TextView) textViews_withTAG_texto.get(i)).getText().toString() + "\n";
-                SpannableString ss = new SpannableString(((TextView) textViews_withTAG_texto.get(i)).getText());
-                SuperscriptSpan[] spans = ss.getSpans(0, ((TextView) textViews_withTAG_texto.get(i)).getText().length(), SuperscriptSpan.class);
-                int corr = 0;
-                for (SuperscriptSpan span : spans) {
-                    int start = ss.getSpanStart(span) + corr;
-                    text_fromTextView = text_fromTextView.substring(0, start) + "^" + text_fromTextView.substring(start);
-                    corr++;
+                if (textViews_withTAG_texto.get(i) instanceof TextView) {
+                    String text_fromTextView = ((TextView) textViews_withTAG_texto.get(i)).getText().toString() + "\n";
+                    SpannableString ss = new SpannableString(((TextView) textViews_withTAG_texto.get(i)).getText());
+                    SuperscriptSpan[] spans = ss.getSpans(0, ((TextView) textViews_withTAG_texto.get(i)).getText().length(), SuperscriptSpan.class);
+                    int corr = 0;
+                    for (SuperscriptSpan span : spans) {
+                        int start = ss.getSpanStart(span) + corr;
+                        text_fromTextView = text_fromTextView.substring(0, start) + "^" + text_fromTextView.substring(start);
+                        corr++;
+                    }
+                    text_fromTextViews_final += text_fromTextView;
                 }
-                text_fromTextViews_final += text_fromTextView;
             }
 
             Intent sendIntent = new Intent();
@@ -72,7 +75,8 @@ public class MenuHelper {
             sendIntent.putExtra(Intent.EXTRA_TEXT, activity.getResources().getString(R.string.app_long_description) +
                     activity.getResources().getString(R.string.app_version_name) + "\n" + text_fromTextViews_final);
             sendIntent.setType("text/plain");
-            activity.startActivity(sendIntent);
+            activity.startActivity(Intent.createChooser(sendIntent, mActivity.getResources().getString(R.string.app_name)));
+
         } else {
             Toast thetoast = Toast.makeText(activity, R.string.nothing_toshare, Toast.LENGTH_SHORT);
             thetoast.setGravity(Gravity.CENTER, 0, 0);

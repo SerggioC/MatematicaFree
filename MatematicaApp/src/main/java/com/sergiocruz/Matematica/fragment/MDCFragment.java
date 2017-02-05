@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
@@ -41,6 +42,7 @@ import android.widget.Toast;
 
 import com.sergiocruz.Matematica.R;
 import com.sergiocruz.Matematica.activity.AboutActivity;
+import com.sergiocruz.Matematica.activity.MainActivity;
 import com.sergiocruz.Matematica.activity.SettingsActivity;
 import com.sergiocruz.Matematica.helper.CreateCardView;
 import com.sergiocruz.Matematica.helper.GetPro;
@@ -55,6 +57,8 @@ import static android.animation.LayoutTransition.CHANGE_DISAPPEARING;
 import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 import static android.widget.LinearLayout.HORIZONTAL;
 import static android.widget.Toast.makeText;
+import static com.sergiocruz.Matematica.fragment.FatorizarFragment.collapseIt;
+import static com.sergiocruz.Matematica.fragment.FatorizarFragment.expandIt;
 import static com.sergiocruz.Matematica.fragment.MMCFragment.CARD_TEXT_SIZE;
 import static java.lang.Long.parseLong;
 
@@ -174,6 +178,12 @@ public class MDCFragment extends Fragment {
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        MainActivity.getAds();
     }
 
     @Override
@@ -961,14 +971,17 @@ public class MDCFragment extends Fragment {
         explainLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                View explView = ((CardView) view.getParent().getParent().getParent()).findViewWithTag("ll_vertical_expl");
                 if (!isExpanded[0]) {
                     ((TextView) view).setText(ssb_hide_expl);
-                    ((LinearLayout) view.getParent().getParent()).findViewWithTag("ll_vertical_expl").setVisibility(View.VISIBLE);
+                    //explView.setVisibility(View.VISIBLE);
+                    expandIt(explView);
                     isExpanded[0] = true;
 
                 } else if (isExpanded[0]) {
                     ((TextView) view).setText(ssb_show_expl);
-                    ((LinearLayout) view.getParent().getParent()).findViewWithTag("ll_vertical_expl").setVisibility(View.GONE);
+                    //explView.setVisibility(View.GONE);
+                    collapseIt(explView);
                     isExpanded[0] = false;
                 }
             }
@@ -1004,7 +1017,6 @@ public class MDCFragment extends Fragment {
         cardview.addView(ll_vertical_root);
 
     }
-
 
 
     @Override

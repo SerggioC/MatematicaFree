@@ -3,23 +3,37 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     android:id="@+id/content_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.sergiocruz.Matematica.fragment.HomeFragment">
 
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        ads:adSize="SMART_BANNER"
+        ads:adUnitId="@string/banner_ad_unit_id">
+    </com.google.android.gms.ads.AdView>
 
     <ScrollView
         android:id="@+id/scrollView"
+        android:layout_above="@id/adView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
         <LinearLayout
             android:id="@+id/linear_main"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_gravity="center_horizontal">
+            android:layout_gravity="center_horizontal"
+            android:orientation="vertical">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -61,8 +75,8 @@
                         android:id="@+id/textView2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
                         android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
                         android:onClick="mmc"
                         android:text="@string/home_mmc_description"
                         android:textAppearance="@style/TextAppearance.AppCompat"/>
@@ -103,8 +117,8 @@
                         android:id="@+id/textmdc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
                         android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
                         android:onClick="mdc"
                         android:text="@string/home_mdc_description"
                         android:textAppearance="@style/TextAppearance.AppCompat"/>
@@ -147,8 +161,8 @@
                         android:id="@+id/textfactor"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
                         android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
                         android:onClick="fatorizar"
                         android:text="@string/home_factorize_description"
                         android:textAppearance="@style/TextAppearance.AppCompat"/>
@@ -189,8 +203,8 @@
                         android:id="@+id/text_divisores"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
                         android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
                         android:onClick="divisores"
                         android:text="@string/home_divisors_description"
                         android:textAppearance="@style/TextAppearance.AppCompat"/>
@@ -231,16 +245,20 @@
                         android:id="@+id/text_primos"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
                         android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
                         android:onClick="primes_table"
                         android:text="@string/home_primetable_description"
                         android:textAppearance="@style/TextAppearance.AppCompat"/>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 
+
+
+
         </LinearLayout>
 
     </ScrollView>
+
 
 </RelativeLayout>

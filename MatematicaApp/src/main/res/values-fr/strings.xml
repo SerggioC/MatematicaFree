@@ -160,7 +160,7 @@
         <item>1</item>
     </string-array>
     <string name="getProFeature">Obtenez cette fonctionnalité et bien d\'autres sur la version PRO</string>
-    <string name="nav_buy_pro">Acheter la version PRO</string>
+    <string name="nav_buy_pro">Obtenez la version PRO sans annonces</string>
     <string name="adSubtitle">Cliquez ici pour le consulter sur PlayStore</string>
 
 </resources>

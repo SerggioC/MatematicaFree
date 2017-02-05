@@ -200,7 +200,7 @@ public class SwipeToDismissTouchListener implements View.OnTouchListener {
                 sendIntent.putExtra(Intent.EXTRA_TEXT, mActivity.getResources().getString(R.string.app_long_description) +
                         mActivity.getResources().getString(R.string.app_version_name) + "\n" + text_fromTextViews_final);
                 sendIntent.setType("text/plain");
-                mActivity.startActivity(sendIntent);
+                mActivity.startActivity(Intent.createChooser(sendIntent, mActivity.getResources().getString(R.string.app_name)));
                 customPopUp.dismiss();
             }
         });
@@ -222,16 +222,18 @@ public class SwipeToDismissTouchListener implements View.OnTouchListener {
         ArrayList<View> textViews_withTAG_texto = getViewsByTag((ViewGroup) mView, "texto");
         String text_fromTextViews_final = "";
         for (int i = 0; i < textViews_withTAG_texto.size(); i++) {
-            String text_fromTextView = (((TextView) textViews_withTAG_texto.get(i)).getText().toString()) + "\n";
-            SpannableString ss = new SpannableString(((TextView) textViews_withTAG_texto.get(i)).getText());
-            SuperscriptSpan[] spans = ss.getSpans(0, ((TextView) textViews_withTAG_texto.get(i)).getText().length(), SuperscriptSpan.class);
-            int corr = 0;
-            for (SuperscriptSpan span : spans) {
-                int start = ss.getSpanStart(span) + corr;
-                text_fromTextView = text_fromTextView.substring(0, start) + "^" + text_fromTextView.substring(start);
-                corr++;
+            if (textViews_withTAG_texto.get(i) instanceof TextView) {
+                String text_fromTextView = (((TextView) textViews_withTAG_texto.get(i)).getText().toString()) + "\n";
+                SpannableString ss = new SpannableString(((TextView) textViews_withTAG_texto.get(i)).getText());
+                SuperscriptSpan[] spans = ss.getSpans(0, ((TextView) textViews_withTAG_texto.get(i)).getText().length(), SuperscriptSpan.class);
+                int corr = 0;
+                for (SuperscriptSpan span : spans) {
+                    int start = ss.getSpanStart(span) + corr;
+                    text_fromTextView = text_fromTextView.substring(0, start) + "^" + text_fromTextView.substring(start);
+                    corr++;
+                }
+                text_fromTextViews_final += text_fromTextView;
             }
-            text_fromTextViews_final += text_fromTextView;
         }
         return text_fromTextViews_final;
     }

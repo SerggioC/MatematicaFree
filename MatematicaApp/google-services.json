@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "729480672886",
+    "firebase_url": "https://matematicafree-aa107.firebaseio.com",
+    "project_id": "matematicafree-aa107",
+    "storage_bucket": "matematicafree-aa107.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:729480672886:android:1a2eee0ab6affd15",
+        "android_client_info": {
+          "package_name": "com.sergiocruz.Matematica"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "729480672886-7loqhbrbe8vdp6kahnkdnqr0cfsukg51.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6zEPRTCcOTexwr0jxXvI0ABNkG0YBzYM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "729480672886-7loqhbrbe8vdp6kahnkdnqr0cfsukg51.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

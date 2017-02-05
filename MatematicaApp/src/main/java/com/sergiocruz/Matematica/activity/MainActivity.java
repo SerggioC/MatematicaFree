@@ -1,5 +1,6 @@
 package com.sergiocruz.Matematica.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,6 +16,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.sergiocruz.Matematica.R;
 import com.sergiocruz.Matematica.fragment.DivisoresFragment;
 import com.sergiocruz.Matematica.fragment.FatorizarFragment;
@@ -22,6 +25,7 @@ import com.sergiocruz.Matematica.fragment.HomeFragment;
 import com.sergiocruz.Matematica.fragment.MDCFragment;
 import com.sergiocruz.Matematica.fragment.MMCFragment;
 import com.sergiocruz.Matematica.fragment.PrimesTableFragment;
+import com.sergiocruz.Matematica.fragment.PrimorialFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG_FATORIZAR = "fatorizar";
     private static final String TAG_DIVISORES = "divisores";
     private static final String TAG_PRIMES_TABLE = "primes_table";
+    private static final String TAG_PRIMORIAL = "primorial";
     // index to identify current nav menu item
     public static int navItemIndex = 0;
 
@@ -47,10 +52,13 @@ public class MainActivity extends AppCompatActivity {
     private boolean shouldLoadHomeFragOnBackPress = true;
     private Handler mHandler;
     Fragment mContent;
+    static Activity mActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mActivity = this;
 
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -80,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
             mContent = getSupportFragmentManager().getFragment(savedInstanceState, "mContent");
 
         }
+
 
     }
 
@@ -163,6 +172,10 @@ public class MainActivity extends AppCompatActivity {
                 // Fragment Tabela de números Primos
                 PrimesTableFragment primesTableFragment = new PrimesTableFragment();
                 return primesTableFragment;
+            case 6:
+                // Fragment Calcular Primorial
+                PrimorialFragment primorialFragment = new PrimorialFragment();
+                return primorialFragment;
             default:
                 return new HomeFragment();
         }
@@ -214,6 +227,10 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.nav_prime_table:
                         navItemIndex = 5;
                         CURRENT_TAG = TAG_PRIMES_TABLE;
+                        break;
+                    case R.id.nav_primorial:
+                        navItemIndex = 6;
+                        CURRENT_TAG = TAG_PRIMORIAL;
                         break;
                     case R.id.nav_settings:
                         startActivity(new Intent(MainActivity.this, SettingsActivity.class));
@@ -269,6 +286,15 @@ public class MainActivity extends AppCompatActivity {
 
         //calling sync state is necessary or else your hamburger icon wont show up
         actionBarDrawerToggle.syncState();
+    }
+
+    public static void getAds() {
+        AdView mAdView = (AdView) mActivity.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("607DBD1D7969B2188FE8C4C610D86954")
+                .build();
+        mAdView.loadAd(adRequest);
     }
 
     @Override

@@ -50,14 +50,20 @@ import com.sergiocruz.Matematica.helper.GetPro;
 import com.sergiocruz.Matematica.helper.MenuHelper;
 import com.sergiocruz.Matematica.helper.SwipeToDismissTouchListener;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 
 import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 import static java.lang.Long.parseLong;
 
+/*****
+ * Project MatematicaFree
+ * Package com.sergiocruz.Matematica.fragment
+ * Created by Sergio on 05/02/2017 12:47
+ ******/
 
-public class DivisoresFragment extends Fragment {
+public class PrimorialFragment extends Fragment {
 
     public AsyncTask<Long, Double, ArrayList<Long>> BG_Operation = new BackGroundOperation();
     int cv_width, height_dip;
@@ -71,7 +77,7 @@ public class DivisoresFragment extends Fragment {
     long startTime;
     float scale;
 
-    public DivisoresFragment() {
+    public PrimorialFragment() {
         // Required empty public constructor
     }
 
@@ -107,9 +113,9 @@ public class DivisoresFragment extends Fragment {
         if (id == R.id.action_clear_all_history) {
             MenuHelper.remove_history(mActivity);
         }
-        if (id == R.id.action_help_divisores) {
-            String help_divisores = getString(R.string.help_text_divisores);
-            SpannableStringBuilder ssb = new SpannableStringBuilder(help_divisores);
+        if (id == R.id.action_help_primorial) {
+            String help_primorial = getString(R.string.help_text_primorial);
+            SpannableStringBuilder ssb = new SpannableStringBuilder(help_primorial);
             LinearLayout history = (LinearLayout) mActivity.findViewById(R.id.history);
             CreateCardView.create(history, ssb, mActivity);
         }
@@ -155,7 +161,7 @@ public class DivisoresFragment extends Fragment {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mActivity);
 
         // set title
-        alertDialogBuilder.setTitle(getString(R.string.calculate_divisors_title));
+        alertDialogBuilder.setTitle(getString(R.string.calculate_primorial_title));
 
         // set dialog message
         alertDialogBuilder
@@ -180,7 +186,7 @@ public class DivisoresFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        final View view = inflater.inflate(R.layout.fragment_divisores, container, false);
+        final View view = inflater.inflate(R.layout.fragment_primorial, container, false);
         final EditText num_1 = (EditText) view.findViewById(R.id.editNum);
 
         cancelButton = (ImageView) view.findViewById(R.id.cancelTask);
@@ -191,11 +197,11 @@ public class DivisoresFragment extends Fragment {
             }
         });
 
-        button = (Button) view.findViewById(R.id.button_calc_divisores);
+        button = (Button) view.findViewById(R.id.button_calc_primorial);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                calcDivisores(view);
+                calcPrimorial(view);
             }
         });
 
@@ -274,7 +280,7 @@ public class DivisoresFragment extends Fragment {
         }
     }
 
-    public void calcDivisores(View view) {
+    public void calcPrimorial(View view) {
         startTime = System.nanoTime();
         hideKeyboard();
         EditText edittext = (EditText) view.findViewById(R.id.editNum);
@@ -296,12 +302,6 @@ public class DivisoresFragment extends Fragment {
             return;
         }
 
-        if (editnumText.equals("0") || num == 0L) {
-            SpannableStringBuilder ssb = new SpannableStringBuilder(getString(R.string.zero_no_divisores));
-            LinearLayout history = (LinearLayout) mActivity.findViewById(R.id.history);
-            CreateCardView.create(history, ssb, mActivity);
-            return;
-        }
         BG_Operation = new BackGroundOperation().execute(num);
     }
 
@@ -333,10 +333,10 @@ public class DivisoresFragment extends Fragment {
             /*
             *
             * Performance update
-            * Primeiro obtem os fatores primos depois multiplica-os
+            * Primeiro obtém os fatores primos depois multiplica-os
             *
             * */
-            ArrayList<Long> divisores = new ArrayList<>();
+            ArrayList<Long> divisores = new ArrayList<>(); //divisores = números primos?
             Long number = num[0];
             double progress;
             double oldProgress = 0f;
@@ -502,4 +502,39 @@ public class DivisoresFragment extends Fragment {
         // add the textview to the cardview
         cardview.addView(ll_vertical_root);
     }
+
+    final static int sieveLimit = 1_300_000;
+    static boolean[] notPrime = sieve(sieveLimit);
+
+
+    static BigInteger primorial(int n) {
+        if (n == 0)
+            return BigInteger.ONE;
+
+        BigInteger result = BigInteger.ONE;
+        for (int i = 0; i < sieveLimit && n > 0; i++) {
+            if (notPrime[i])
+                continue;
+            result = result.multiply(BigInteger.valueOf(i));
+            n--;
+        }
+        return result;
+    }
+
+    public static boolean[] sieve(int limit) {
+        boolean[] composite = new boolean[limit];
+        composite[0] = composite[1] = true;
+
+        int max = (int) Math.sqrt(limit);
+        for (int n = 2; n <= max; n++) {
+            if (!composite[n]) {
+                for (int k = n * n; k < limit; k += n) {
+                    composite[k] = true;
+                }
+            }
+        }
+        return composite;
+    }
+
+
 }

@@ -2,7 +2,7 @@
 
     <string name="app_long_description">Matemática: Prime Number Tools Free v</string>
     <string name="app_version_description">Versão da Aplicação:</string>
-    <string name="app_version_date">Janeiro 2017</string>
+    <string name="app_version_date">Fevereiro 2017</string>
 
     <!-- Navigation Drawer menu labels -->
     <string name="nav_home">Início</string>
@@ -14,6 +14,7 @@
     <string name="nav_share">Partilhar</string>
     <string name="nav_sendmail">Enviar e-mail</string>
     <string name="nav_about_us">Sobre a Aplicação</string>
+    <string name="nav_primorial">Calculate Primorial P#</string>
 
     <!-- Toolbar titles when navigation menu item is selected-->
     <string-array name="nav_item_activity_titles">
@@ -23,6 +24,7 @@
         <item>@string/factorize</item>
         <item>@string/divisors</item>
         <item>@string/tabela_primos</item>
+        <item>@string/nav_primorial</item>
     </string-array>
 
     <string name="activity_title_about_us">Sobre</string>
@@ -187,7 +189,7 @@ Nesse sentido, o conjunto dos números formados pelos divisores de um número na
     </string-array>
 
     <item type="id" name="texto"/>
-    <string name="nav_buy_pro">Comprar versão PRO</string>
+    <string name="nav_buy_pro">Obter versão PRO sem publicidade</string>
     <string name="adSubtitle">Clicar aqui para ver na PlayStore</string>
 
 </resources>

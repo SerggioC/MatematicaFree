@@ -24,11 +24,18 @@
     <color name="f_color2">#4CAF50</color>
     <color name="f_color3">#ff1744</color>
     <color name="f_color4">#ffc400</color>
-    <color name="f_color5">#9C27B0</color>
+    <color name="f_color5">#e040fb</color>
     <color name="f_color6">#ff80ab</color>
     <color name="f_color7">#4358c7</color>
     <color name="f_color8">#ff6f00</color>
-    <color name="f_color9">#263238</color>
+    <color name="f_color9">#00d9ad</color>
+    <color name="f_color10">#7e00be</color>
+    <color name="f_color11">#ffccbc</color>
+    <color name="f_color12">#aaff00</color>
+    <color name="f_color13">#5241c4</color>
+    <color name="f_color14">#99738c</color>
+    <color name="f_color15">#734d00</color>
+    <color name="f_color16">#263238</color>
 
     <array name="f_colors_xml">
         <item>@color/f_color1</item>
@@ -40,6 +47,104 @@
         <item>@color/f_color7</item>
         <item>@color/f_color8</item>
         <item>@color/f_color9</item>
+        <item>@color/f_color10</item>
+        <item>@color/f_color11</item>
+        <item>@color/f_color12</item>
+        <item>@color/f_color13</item>
+        <item>@color/f_color14</item>
+        <item>@color/f_color15</item>
+        <item>@color/f_color16</item>
     </array>
+
+    <color name="r_color01">#8c2323</color>
+    <color name="r_color02">#f28979</color>
+    <color name="r_color03">#4c2b26</color>
+    <color name="r_color04">#d93a00</color>
+    <color name="r_color05">#ffd0bf</color>
+    <color name="r_color06">#806860</color>
+    <color name="r_color07">#592400</color>
+    <color name="r_color08">#cc7033</color>
+    <color name="r_color09">#ffaa00</color>
+    <color name="r_color10">#734d00</color>
+    <color name="r_color11">#bf9f60</color>
+    <color name="r_color12">#59502d</color>
+    <color name="r_color13">#a7b300</color>
+    <color name="r_color14">#aaff00</color>
+    <color name="r_color15">#a4b386</color>
+    <color name="r_color16">#008000</color>
+    <color name="r_color17">#006600</color>
+    <color name="r_color18">#3df26d</color>
+    <color name="r_color19">#00401a</color>
+    <color name="r_color20">#468c6c</color>
+    <color name="r_color21">#00d9ad</color>
+    <color name="r_color22">#00becc</color>
+    <color name="r_color23">#103d40</color>
+    <color name="r_color24">#99c9cc</color>
+    <color name="r_color25">#39ace6</color>
+    <color name="r_color26">#46758c</color>
+    <color name="r_color27">#334766</color>
+    <color name="r_color28">#6674cc</color>
+    <color name="r_color29">#868cb3</color>
+    <color name="r_color30">#070033</color>
+    <color name="r_color31">#4733cc</color>
+    <color name="r_color32">#392d59</color>
+    <color name="r_color33">#330080</color>
+    <color name="r_color34">#d9bfff</color>
+    <color name="r_color35">#aa00ff</color>
+    <color name="r_color36">#8c0083</color>
+    <color name="r_color37">#f279ea</color>
+    <color name="r_color38">#330d26</color>
+    <color name="r_color39">#99738c</color>
+    <color name="r_color40">#e5007a</color>
+    <color name="r_color41">#8c004b</color>
+    <color name="r_color42">#e5003d</color>
+    <color name="r_color43">#ffbfd0</color>
+
+    <array name="r_colors">
+        <item>@color/r_color01</item>
+        <item>@color/r_color02</item>
+        <item>@color/r_color03</item>
+        <item>@color/r_color04</item>
+        <item>@color/r_color05</item>
+        <item>@color/r_color06</item>
+        <item>@color/r_color07</item>
+        <item>@color/r_color08</item>
+        <item>@color/r_color09</item>
+        <item>@color/r_color10</item>
+        <item>@color/r_color11</item>
+        <item>@color/r_color12</item>
+        <item>@color/r_color13</item>
+        <item>@color/r_color14</item>
+        <item>@color/r_color15</item>
+        <item>@color/r_color16</item>
+        <item>@color/r_color17</item>
+        <item>@color/r_color18</item>
+        <item>@color/r_color19</item>
+        <item>@color/r_color20</item>
+        <item>@color/r_color21</item>
+        <item>@color/r_color22</item>
+        <item>@color/r_color23</item>
+        <item>@color/r_color24</item>
+        <item>@color/r_color25</item>
+        <item>@color/r_color26</item>
+        <item>@color/r_color27</item>
+        <item>@color/r_color28</item>
+        <item>@color/r_color29</item>
+        <item>@color/r_color30</item>
+        <item>@color/r_color31</item>
+        <item>@color/r_color32</item>
+        <item>@color/r_color33</item>
+        <item>@color/r_color34</item>
+        <item>@color/r_color35</item>
+        <item>@color/r_color36</item>
+        <item>@color/r_color37</item>
+        <item>@color/r_color38</item>
+        <item>@color/r_color39</item>
+        <item>@color/r_color40</item>
+        <item>@color/r_color41</item>
+        <item>@color/r_color42</item>
+        <item>@color/r_color43</item>
+    </array>
+
 
 </resources>
