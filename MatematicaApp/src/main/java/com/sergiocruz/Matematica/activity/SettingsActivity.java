@@ -2,6 +2,7 @@ package com.sergiocruz.Matematica.activity;
 
 
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -106,6 +107,27 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         Preference pref_show_performance = findPreference("pref_show_performance");
         pref_show_performance.setEnabled(false);
+
+        final CheckBoxPreference bruteForce = (CheckBoxPreference) findPreference("pref_brute_force_mode");
+        final CheckBoxPreference probabilistic = (CheckBoxPreference) findPreference("pref_probabilistic_mode");
+
+        bruteForce.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                probabilistic.setChecked(!bruteForce.isChecked());
+                return true;
+            }
+        });
+
+        probabilistic.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                bruteForce.setChecked(!probabilistic.isChecked());
+                return true;
+            }
+        });
+
+
     }
 
     @Override

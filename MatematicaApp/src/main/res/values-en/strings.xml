@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_version_date">January 2017</string>
-    <string name="app_long_description">Matemática: Prime Number Tools Free v</string>
+    <string name="app_version_date">February 2017</string>
+    <string name="app_long_description">Prime Number Tools Free v</string>
     <string name="has_email">Do you have an email APP installed?</string>
     <string name="action_ajuda_divisores">How to obtain divisors?</string>
     <string name="action_ajuda_fatorizar">How to factorize a number?</string>
@@ -46,12 +46,14 @@
     <string name="nav_fatorizar">Factorize</string>
     <string name="nav_home">Home</string>
     <string name="nav_mdc">GCD</string>
-    <string name="nav_mmc">LMC</string>
+    <string name="nav_mmc">LCM</string>
     <string name="nav_primes_table">Prime Table Generator</string>
     <string name="nav_sendmail">Send e-mail</string>
     <string name="nav_share">Share</string>
     <string name="desenvolvido_por">Developed by Sérgio C.</string>
-    <string name="about_app_description">- Calculation of the Least Common Multiple (LCM) between up to 8 numbers with detailed color explanations\n - Calculation of the Greatest Common Divisor (GCD) between up to 8 numbers with detailed color explanations\n - Factorization in Prime Numbers with detailed explanations\n - Determine if a number is prime or also called Primality test\n - Determine whether one or more numbers are relatively prime through GCD\n - Calculate all divisors of an integer\n - Prime number table generator in a given range\n - Total prime numbers in range</string>
+    <string name="about_app_description">- Calculation of the Least Common Multiple (LCM) between up to 8 numbers with detailed color explanations\n - Calculation of the Greatest Common Divisor (GCD) between up to 8 numbers with detailed color explanations\n - Factorization in Prime Numbers with detailed explanations\n - Determine if a number is prime or also called Primality test\n - Determine whether one or more numbers are relatively prime through GCD\n - Calculate all divisors of an integer\n - Prime number table generator in a given range
+        \n - Total prime numbers in range
+        \n - Calculate Primorial of a number</string>
     <string name="app_version_description">App version:</string>
     <string name="send_comment">Send suggestion, improvement or comment</string>
     <string name="send">Send</string>
@@ -64,7 +66,7 @@
     <string name="home_factorize_description">▸Factorize - Decompose a number into prime factors\n▸Check if a number is prime/Primality test</string>
     <string name="home_divisors_description">▸Divisors - Calculate all divisors of an integer\n▸Check if a number is prime</string>
     <string name="home_primetable_description">▸Prime numbers table generator for a given range\n▸Total of prime numbers in the range</string>
-    <string name="app_inicio">Matemática - Home</string>
+    <string name="app_inicio">Primes Free - Home</string>
     <string name="divisors">Divisors</string>
     <string name="factorize">Factorize number</string>
     <string name="mdc">GCD</string>
@@ -141,7 +143,7 @@
         <item>1</item>
     </string-array>
     <string name="cardinal_primos"># of primes:</string>
-    <string name="errorsavingimg">Error while saving image.</string>
+    <string name="errorsavingimg">Error while saving image. Please Allow the app to save files.</string>
     <string name="expl_text_divisores_1">▻ Divide the number successively by the lowest prime number, so as to obtain an exact division, until you get 1:</string>
     <string name="explain_divisores2">▻ The number is equal to the product of the prime factors obtained:</string>
     <string name="explain_divisores3">▻ Repeated factors are counted and this value is placed as an exponent:</string>
@@ -153,4 +155,10 @@
     <string name="getProFeature">Get this feaure and many more on PRO version</string>
     <string name="nav_buy_pro">Get PRO version without ads</string>
     <string name="adSubtitle">Click here to check it out on PlayStore</string>
+    <string name="action_ajuda_primorial">How to calculate n#</string>
+    <string name="calculate_primorial_title">Calculate Primorial of a number n#</string>
+    <string name="help_text_primorial">In mathematics, and more particularly in number theory, primorial is a function from natural numbers to natural numbers similar to the factorial function, but rather than successively multiplying positive integers, only prime numbers are multiplied. Primorial of a number is denoted by n#.</string>
+    <string name="home_primorial_description">▸ Calculate Primorial of a number n#</string>
+    <string name="nav_primorial">Calculate Primorial n#</string>
+    <string name="zeroPrimorial">Numbers > 0</string>
 </resources>

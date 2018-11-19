@@ -233,7 +233,7 @@
                     android:padding="8dp">
 
                     <ImageView
-                        android:id="@+id/imageView7"
+                        android:id="@+id/imageView6"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
@@ -253,7 +253,47 @@
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 
+            <android.support.v7.widget.CardView
+                xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/card_view_7"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="4dp"
+                card_view:cardBackgroundColor="@color/bgCardColor"
+                card_view:cardCornerRadius="8dp">
 
+                <LinearLayout
+                    android:id="@+id/linear_primorial"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="primorial"
+                    android:orientation="horizontal"
+                    android:padding="8dp">
+
+                    <ImageView
+                        android:id="@+id/imageView7"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginRight="16dp"
+                        android:onClick="primorial"
+                        app:srcCompat="@mipmap/ic_primorial"/>
+
+                    <TextView
+                        android:id="@+id/textView7"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:onClick="primorial"
+                        android:text="@string/home_primorial_description"
+                        android:textAppearance="@style/TextAppearance.AppCompat"/>
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
 
 
         </LinearLayout>

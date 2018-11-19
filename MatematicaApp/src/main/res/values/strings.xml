@@ -1,15 +1,20 @@
 <resources>
+
+    <!--Ads related strings-->
     <string name="banner_ad_unit_id" translatable="false">ca-app-pub-5891836101673362/8926080338</string>
-    <string name="aplication_id" translatable="false">ca-app-pub-5891836101673362~4534736733</string>
+    <string name="ads_application_id" translatable="false">ca-app-pub-5891836101673362~4534736733</string>
+    <string name="ads_publisher_id" translatable="false">pub-5891836101673362</string>
+    <string name="privacy_policy_url" translatable="false">https://sergiocrz.wordpress.com/privacy-policy/</string>
 
-    <string name="app_name" translatable="false">Matemática Free</string>
-    <string name="app_version_name" translatable="false">2.9.1</string>
 
-    <string name="app_long_description">Matemática: Prime Number Tools Free v</string>
+    <string name="app_name" translatable="false">Primes Free</string>
+    <string name="app_version_name" translatable="false">3.0</string>
+
+    <string name="app_long_description">Prime Number Tools Free v</string>
     <string name="app_version_description">App version:</string>
     <string name="app_version_date">February 2017</string>
 
-    <string name="app_long_description_PRO" translatable="false">Matemática: Prime Number Tools PRO</string>
+    <string name="app_long_description_PRO" translatable="false">Prime Number Tools PRO</string>
 
     <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
     <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
@@ -19,7 +24,7 @@
     <!-- Navigation Drawer menu labels -->
 
     <string name="nav_home">Home</string>
-    <string name="nav_mmc">LMC</string>
+    <string name="nav_mmc">LCM</string>
     <string name="nav_mdc">GCD</string>
     <string name="nav_fatorizar">Factorize</string>
     <string name="nav_divisores">Divisors</string>
@@ -84,7 +89,7 @@
     <string name="zero_no_divisores">Divisors of zero are all natural numbers greater than zero.</string>
 
     <string name="desenvolvido_por">Developed by Sérgio C.</string>
-    <string name="about_app_description">- Calculation of the Least Common Multiple (LCM) between up to 8 numbers with detailed color explanations (PRO version)\n - Calculation of the Greatest Common Divisor (GCD) between up to 8 numbers with detailed color explanations (PRO version)\n - Factorization in Prime Numbers with detailed explanations\n - Determine if a number is prime or also called Primality test\n - Determine whether one or more numbers are relatively prime through GCD\n - Calculate all divisors of an integer\n - Prime number table generator in a given range\n - Total prime numbers in range</string>
+    <string name="about_app_description">- Calculation of the Least Common Multiple (LCM) between up to 8 numbers with detailed color explanations (PRO version)\n - Calculation of the Greatest Common Divisor (GCD) between up to 8 numbers with detailed color explanations (PRO version)\n - Factorization in Prime Numbers with detailed color explanations\n - Determine if a number is prime or also called Primality test\n - Determine whether one or more numbers are relatively prime through GCD\n - Calculate all divisors of an integer\n - Prime number table generator in a given range\n - Total prime numbers in range\n - Calculate Primorial of a number n#</string>
     <string name="send_comment">Send suggestion, improvement or comment</string>
     <string name="send">Send</string>
     <string name="calculate_divisors_title">Calculate the divisors of a number</string>
@@ -96,7 +101,7 @@
     <string name="home_factorize_description">▸Factorize - Decompose a number into prime factors\n▸Check if a number is prime/Primality test</string>
     <string name="home_divisors_description">▸Divisors - Calculate all divisors of an integer\n▸Check if a number is prime</string>
     <string name="home_primetable_description">▸Prime numbers table generator for a given range\n▸Total of prime numbers in the range</string>
-    <string name="app_inicio">Matemática - Home</string>
+    <string name="app_inicio">Primes Free - Home</string>
     <string name="divisors">Divisors</string>
     <string name="factorize">Factorize number</string>
     <string name="mdc">GCD</string>
@@ -174,7 +179,7 @@
         <item>1</item>
     </string-array>
     <string name="cardinal_primos"># of primes:</string>
-    <string name="errorsavingimg">Error while saving image.</string>
+    <string name="errorsavingimg">Error while saving image. Please Allow the app to save files.</string>
     <string name="expl_text_divisores_1">▻ Divide the number successively by the lowest prime number, so as to obtain an exact division, until you get 1:</string>
     <string name="explain_divisores2">▻ The number is equal to the product of the prime factors obtained:</string>
     <string name="explain_divisores3">▻ Repeated factors are counted and this value is placed as an exponent:</string>
@@ -186,10 +191,12 @@
     <string name="getProFeature">Get this feaure and many more on PRO version</string>
     <string name="nav_buy_pro">Get PRO version without ads</string>
     <string name="adSubtitle">Click here to check it out on PlayStore</string>
-    <string name="calculate_primorial_title">Calculate Primorial of a number P#</string>
-    <string name="action_ajuda_primorial">How to calculate P#?</string>
-    <string name="help_text_primorial">In mathematics, and more particularly in number theory, primorial is a function from natural numbers to natural numbers similar to the factorial function, but rather than successively multiplying positive integers, only prime numbers are multiplied.</string>
-    <string name="nav_primorial">Calculate Primorial P#</string>
+    <string name="calculate_primorial_title">Calculate Primorial of a number n#</string>
+    <string name="action_ajuda_primorial">How to calculate n#</string>
+    <string name="help_text_primorial">In mathematics, and more particularly in number theory, primorial is a function from natural numbers to natural numbers similar to the factorial function, but rather than successively multiplying positive integers, only prime numbers are multiplied. Primorial of a number is denoted by n#. </string>
+    <string name="nav_primorial">Calculate Primorial n#</string>
+    <string name="home_primorial_description">▸ Calculate Primorial of a number n#</string>
+    <string name="zeroPrimorial">Numbers > 0</string>
 
 
     <item name="texto" type="id"/>

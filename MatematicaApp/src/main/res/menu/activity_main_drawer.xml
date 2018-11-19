@@ -33,7 +33,7 @@
         android:title="@string/tabela_primos"/>
     <item
         android:id="@+id/nav_primorial"
-        android:icon="@mipmap/ic_primes"
+        android:icon="@mipmap/ic_primorial"
         android:title="@string/nav_primorial"/>
 
     <item android:title="@string/mais">

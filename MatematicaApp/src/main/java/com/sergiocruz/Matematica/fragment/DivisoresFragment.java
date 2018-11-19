@@ -2,7 +2,6 @@ package com.sergiocruz.Matematica.fragment;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -12,7 +11,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -43,8 +41,8 @@ import android.widget.Toast;
 
 import com.sergiocruz.Matematica.R;
 import com.sergiocruz.Matematica.activity.AboutActivity;
-import com.sergiocruz.Matematica.activity.MainActivity;
 import com.sergiocruz.Matematica.activity.SettingsActivity;
+import com.sergiocruz.Matematica.helper.Ads;
 import com.sergiocruz.Matematica.helper.CreateCardView;
 import com.sergiocruz.Matematica.helper.GetPro;
 import com.sergiocruz.Matematica.helper.MenuHelper;
@@ -110,7 +108,7 @@ public class DivisoresFragment extends Fragment {
         if (id == R.id.action_help_divisores) {
             String help_divisores = getString(R.string.help_text_divisores);
             SpannableStringBuilder ssb = new SpannableStringBuilder(help_divisores);
-            LinearLayout history = (LinearLayout) mActivity.findViewById(R.id.history);
+            LinearLayout history = mActivity.findViewById(R.id.history);
             CreateCardView.create(history, ssb, mActivity);
         }
         if (id == R.id.action_about) {
@@ -161,17 +159,11 @@ public class DivisoresFragment extends Fragment {
         alertDialogBuilder
                 .setMessage(R.string.cancel_it)
                 .setCancelable(true)
-                .setPositiveButton(R.string.sim, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        cancel_AsyncTask();
-                        dialog.cancel();
-                    }
+                .setPositiveButton(R.string.sim, (dialog, id) -> {
+                    cancel_AsyncTask();
+                    dialog.cancel();
                 })
-                .setNegativeButton(R.string.nao, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
+                .setNegativeButton(R.string.nao, (dialog, id) -> dialog.cancel());
         AlertDialog alertDialog = alertDialogBuilder.create();        // create alert dialog
         alertDialog.show();                                           // show it
     }
@@ -181,31 +173,16 @@ public class DivisoresFragment extends Fragment {
 
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_divisores, container, false);
-        final EditText num_1 = (EditText) view.findViewById(R.id.editNum);
+        final EditText num_1 = view.findViewById(R.id.editNum);
 
-        cancelButton = (ImageView) view.findViewById(R.id.cancelTask);
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                displayCancelDialogBox();
-            }
-        });
+        cancelButton = view.findViewById(R.id.cancelTask);
+        cancelButton.setOnClickListener(v -> displayCancelDialogBox());
 
-        button = (Button) view.findViewById(R.id.button_calc_divisores);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                calcDivisores(view);
-            }
-        });
+        button = view.findViewById(R.id.button_calc_divisores);
+        button.setOnClickListener(v -> calcDivisores(view));
 
-        Button clearTextBtn = (Button) view.findViewById(R.id.btn_clear);
-        clearTextBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                num_1.setText("");
-            }
-        });
+        Button clearTextBtn = view.findViewById(R.id.btn_clear);
+        clearTextBtn.setOnClickListener(v -> num_1.setText(""));
 
         num_1.addTextChangedListener(new TextWatcher() {
             Long num1;
@@ -238,16 +215,12 @@ public class DivisoresFragment extends Fragment {
 
             }
         });
+
+        Ads.showIn(getContext(), view.findViewById(R.id.adView));
+
         return view;
 
     }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        MainActivity.getAds();
-    }
-
 
     @Override
     public void onDestroy() {
@@ -277,8 +250,8 @@ public class DivisoresFragment extends Fragment {
     public void calcDivisores(View view) {
         startTime = System.nanoTime();
         hideKeyboard();
-        EditText edittext = (EditText) view.findViewById(R.id.editNum);
-        String editnumText = (String) edittext.getText().toString();
+        EditText edittext = view.findViewById(R.id.editNum);
+        String editnumText = edittext.getText().toString();
         if (editnumText.equals(null) || editnumText.equals("") || editnumText == null) {
             Toast thetoast = Toast.makeText(mActivity, R.string.add_num_inteiro, Toast.LENGTH_LONG);
             thetoast.setGravity(Gravity.CENTER, 0, 0);
@@ -298,7 +271,7 @@ public class DivisoresFragment extends Fragment {
 
         if (editnumText.equals("0") || num == 0L) {
             SpannableStringBuilder ssb = new SpannableStringBuilder(getString(R.string.zero_no_divisores));
-            LinearLayout history = (LinearLayout) mActivity.findViewById(R.id.history);
+            LinearLayout history = mActivity.findViewById(R.id.history);
             CreateCardView.create(history, ssb, mActivity);
             return;
         }
@@ -319,10 +292,10 @@ public class DivisoresFragment extends Fragment {
             button.setText(R.string.working);
             cancelButton.setVisibility(View.VISIBLE);
             hideKeyboard();
-            CardView cardView1 = (CardView) mActivity.findViewById(R.id.card_view_1);
+            CardView cardView1 = mActivity.findViewById(R.id.card_view_1);
             cv_width = cardView1.getWidth();
             height_dip = (int) (4 * scale + 0.5f);
-            progressBar = (View) mActivity.findViewById(R.id.progress);
+            progressBar = mActivity.findViewById(R.id.progress);
             progressBar.setLayoutParams(new LinearLayout.LayoutParams(10, height_dip));
             progressBar.setVisibility(View.VISIBLE);
         }
@@ -462,7 +435,7 @@ public class DivisoresFragment extends Fragment {
         cardview.setCardBackgroundColor(cv_color);
 
         // Add cardview to history layout at the top (index 0)
-        final LinearLayout history = (LinearLayout) mActivity.findViewById(R.id.history);
+        final LinearLayout history = mActivity.findViewById(R.id.history);
         history.addView(cardview, 0);
 
         // criar novo Textview

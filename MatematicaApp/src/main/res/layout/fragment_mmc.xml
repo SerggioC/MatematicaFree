@@ -1,9 +1,9 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:ads="http://schemas.android.com/apk/res-auto"
     tools:context="com.sergiocruz.Matematica.fragment.MMCFragment">
 
     <com.google.android.gms.ads.AdView
@@ -18,9 +18,9 @@
 
     <ScrollView
         android:id="@+id/scrollView2"
-        android:layout_above="@id/adView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@id/adView"
         android:background="@color/lightGrey">
 
         <LinearLayout

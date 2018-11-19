@@ -1,6 +1,5 @@
 package com.sergiocruz.Matematica.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,8 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.sergiocruz.Matematica.R;
 import com.sergiocruz.Matematica.fragment.DivisoresFragment;
 import com.sergiocruz.Matematica.fragment.FatorizarFragment;
@@ -41,33 +39,31 @@ public class MainActivity extends AppCompatActivity {
     public static int navItemIndex = 0;
 
     public static String CURRENT_TAG = TAG_HOME;
+    Fragment mContent;
     private NavigationView navigationView;
     private DrawerLayout drawer;
     private Toolbar toolbar;
-
     // toolbar titles respected to selected nav menu item
     private String[] activityTitles;
-
     // flag to load home fragment when user presses back key
     private boolean shouldLoadHomeFragOnBackPress = true;
     private Handler mHandler;
-    Fragment mContent;
-    static Activity mActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mActivity = this;
 
         setContentView(R.layout.activity_main);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        MobileAds.initialize(this, getString(R.string.ads_application_id));
 
         mHandler = new Handler();
 
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        drawer = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
 
         // Icones coloridos no menu de gaveta lateral
         navigationView.setItemIconTintList(null);
@@ -91,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -122,16 +119,13 @@ public class MainActivity extends AppCompatActivity {
         // when switching between navigation menus
         // So using runnable, the fragment is loaded with cross fade effect
         // This effect can be seen in GMail app
-        Runnable mPendingRunnable = new Runnable() {
-            @Override
-            public void run() {
-                // update the main content by replacing fragments
-                Fragment fragment = getFragment();
-                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-                fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
-                fragmentTransaction.commitAllowingStateLoss();
-            }
+        Runnable mPendingRunnable = () -> {
+            // update the main content by replacing fragments
+            Fragment fragment = getFragment();
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+            fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
+            fragmentTransaction.commitAllowingStateLoss();
         };
 
         // If mPendingRunnable is not null, then add to the message queue
@@ -288,15 +282,6 @@ public class MainActivity extends AppCompatActivity {
         actionBarDrawerToggle.syncState();
     }
 
-    public static void getAds() {
-        AdView mAdView = (AdView) mActivity.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .addTestDevice("607DBD1D7969B2188FE8C4C610D86954")
-                .build();
-        mAdView.loadAd(adRequest);
-    }
-
     @Override
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -392,6 +377,14 @@ public class MainActivity extends AppCompatActivity {
         navigationView.getMenu().getItem(navItemIndex).setActionView(null);
         navItemIndex = 5;
         CURRENT_TAG = TAG_PRIMES_TABLE;
+        loadFragment();
+    }
+
+    public void primorial(View view) {
+        //remove dot in menu
+        navigationView.getMenu().getItem(navItemIndex).setActionView(null);
+        navItemIndex = 6;
+        CURRENT_TAG = TAG_PRIMORIAL;
         loadFragment();
     }
 

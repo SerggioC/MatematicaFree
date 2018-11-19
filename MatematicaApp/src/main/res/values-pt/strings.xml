@@ -1,6 +1,6 @@
 <resources>
 
-    <string name="app_long_description">Matemática: Prime Number Tools Free v</string>
+    <string name="app_long_description">Prime Number Tools Free v</string>
     <string name="app_version_description">Versão da Aplicação:</string>
     <string name="app_version_date">Fevereiro 2017</string>
 
@@ -14,7 +14,7 @@
     <string name="nav_share">Partilhar</string>
     <string name="nav_sendmail">Enviar e-mail</string>
     <string name="nav_about_us">Sobre a Aplicação</string>
-    <string name="nav_primorial">Calculate Primorial P#</string>
+    <string name="nav_primorial">Calcular Primorial n#</string>
 
     <!-- Toolbar titles when navigation menu item is selected-->
     <string-array name="nav_item_activity_titles">
@@ -83,7 +83,7 @@ Nesse sentido, o conjunto dos números formados pelos divisores de um número na
     <string name="calculate">Calcular</string>
     <string name="divisors_of">Divisores de</string>
     <string name="_incomplete_calc">Cálculo incompleto…</string>
-    <string name="about_app_description">- Cálculo do Mínimo Múltiplo Comum (MMC) entre até 8 números com explicação detalhada a cores (Versão PRO)\n - Cálculo do Máximo Divisor Comum (MDC) entre até 8 números com explicação detalhada a cores (Versão PRO)\n - Fatorização em Números Primos com explicação detalhada\n - Determinar se um número é primo\n - Determinar se um ou mais números são primos entre si através do MDC\n - Cálculo de todos os divisores de um número inteiro\n - Gerador de tabela de números primos num dado intervalo\n - Total de números primos no intervalo\n</string>
+    <string name="about_app_description">- Cálculo do Mínimo Múltiplo Comum (MMC) entre até 8 números com explicação detalhada a cores (Versão PRO)\n - Cálculo do Máximo Divisor Comum (MDC) entre até 8 números com explicação detalhada a cores (Versão PRO)\n - Fatorização em Números Primos com explicação detalhada a cores\n - Determinar se um número é primo\n - Determinar se um ou mais números são primos entre si através do MDC\n - Cálculo de todos os divisores de um número inteiro\n - Gerador de tabela de números primos num dado intervalo\n - Total de números primos no intervalo\n - Calcular Primorial de um número n#</string>
     <string name="desenvolvido_por">Desenvolvido por Sérgio C.</string>
     <string name="send_comment">Enviar sugestão, melhoria ou comentário</string>
     <string name="send">Enviar</string>
@@ -96,7 +96,7 @@ Nesse sentido, o conjunto dos números formados pelos divisores de um número na
     <string name="home_factorize_description">▸Fatorizar - Decompor um número em fatores primos\n▸Verificar se um número é primo</string>
     <string name="home_divisors_description">▸Divisores - Calcular todos os divisores de um número inteiro\n▸Verificar se um número é primo</string>
     <string name="home_primetable_description">▸Tabela de números primos num dado intervalo\n▸Total de números primos no intervalo</string>
-    <string name="app_inicio">Matemática - Início</string>
+    <string name="app_inicio">Primes Free - Início</string>
     <string name="mmc">MMC</string>
     <string name="mdc">MDC</string>
     <string name="factorize">Fatorizar número</string>
@@ -173,7 +173,7 @@ Nesse sentido, o conjunto dos números formados pelos divisores de um número na
     <string name="explain_divisores3">▻Os fatores repetidos são contados e coloca-se esse valor em expoente:</string>
     <string name="cardinal_primos"># de primos:</string>
     <string name="image_saved">Imagem guardada na pasta</string>
-    <string name="errorsavingimg">Erro ao guardar imagem.</string>
+    <string name="errorsavingimg">Erro ao guardar imagem. Permitir que o aplicativo salve arquivos.</string>
     <string name="getPro">Obtém explicações detalhadas e a cores na versão Pro</string>
     <string name="getProFeature">Obtém esta funcionalidade e muitas mais na versão PRO</string>
 
@@ -191,5 +191,10 @@ Nesse sentido, o conjunto dos números formados pelos divisores de um número na
     <item type="id" name="texto"/>
     <string name="nav_buy_pro">Obter versão PRO sem publicidade</string>
     <string name="adSubtitle">Clicar aqui para ver na PlayStore</string>
+    <string name="home_primorial_description">▸ Calcular Primorial de um número n#</string>
+    <string name="action_ajuda_primorial">Como calcular n#</string>
+    <string name="help_text_primorial">Em matemática, mais particularmente na teoria dos números, primorial é uma função de números naturais para números naturais semelhantes à função factorial mas, em vez de se multiplicar sucessivamente números inteiros positivos, são apenas multiplicados números primos. Primorial de um número é denotado por n#. Por exemplo 7#=2x3x5x7=210</string>
+    <string name="calculate_primorial_title">Calcular Primorial de um número n#</string>
+    <string name="zeroPrimorial">Números > 0</string>
 
 </resources>

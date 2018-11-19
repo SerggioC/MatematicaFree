@@ -30,6 +30,9 @@
         android:required="false"/>
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="com.android.vending.BILLING"/>
+
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -58,6 +61,12 @@
             android:name="com.sergiocruz.Matematica.activity.SettingsActivity"
             android:label="@string/title_activity_settings">
         </activity>
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/ads_application_id"/>
+
+
     </application>
 
 </manifest>

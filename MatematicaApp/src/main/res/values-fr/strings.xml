@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_long_description">Matemática: Prime Number Tools Free v</string>
-    <string name="app_version_date">Janvier 2017</string>
+    <string name="app_long_description">Prime Number Tools Free v</string>
+    <string name="app_version_date">Février 2017</string>
     <string name="app_version_description">Version de l\'application:</string>
 
     <string name="_incomplete_calc">Calcul incomplet...</string>
     <string name="_numero_primo">Nombre premier</string>
     <string name="about_app_description">- Calcul du Plus Petit Commun Multiple (PPCM) entre jusqu\'à 8 nombres avec des explications détaillées en couleur (Version PRO seulement)\n
         - Calcul du Plus Grand Commun Diviseur (PGCD) entre jusqu\'à 8 nombres avec des explications détaillées en couleur (Version PRO seulement)\n
-        - Factorisation en nombres premiers avec des explications détaillées\n
+        - Factorisation en nombres premiers avec des explications détaillées en couleur\n
         - Déterminer si un nombre est premier ou aussi appelé Test de Primalité\n 
         - Déterminer si un ou plusieurs nombres sont premiers entre eux, copremiers, ou encore étrangers par PGCD\n
         - Calculer tous les diviseurs d\'un entier\n
         - Générateur de tableaux de nombres premiers dans une gamme donnée\n
-        - Total des nombres premiers dans la gamme</string>
+        - Total des nombres premiers dans la gamme
+        - Calculer Primorial d\'un nombre n#</string>
     <string name="action_ajuda_divisores">Comment obtenir des diviseurs?</string>
     <string name="action_ajuda_fatorizar">Comment factoriser un nombre?</string>
     <string name="action_ajuda_mdc">Comment calculer le PGCD?</string>
@@ -33,7 +34,7 @@
     <string name="add_number_pair">Entrer au moins une paire d\'entiers</string>
     <string name="already_inclipboard">Résultat déjà dans le Presse-papiers</string>
     <string name="and">et</string>
-    <string name="app_inicio">Matemática - Accueil</string>
+    <string name="app_inicio">Primes Free - Accueil</string>
     <string name="calculate">Calculer</string>
     <string name="calculate_divisors_title">Calculer les diviseurs d\'un nombre</string>
     <string name="cancel_it">Annuler l\'opération?</string>
@@ -48,7 +49,7 @@
     <string name="divisores_number">Diviseurs d\'un nombre</string>
     <string name="divisors">Diviseurs</string>
     <string name="divisors_of">Diviseurs de</string>
-    <string name="errorsavingimg">Erreur lors de l\'enregistrement de l\'image.</string>
+    <string name="errorsavingimg">Erreur lors de l\'enregistrement de l\'image. Veuillez autoriser l\'application à enregistrer des fichiers.</string>
     <string name="escolher">▻Choisir</string>
     <string name="existem">Il y a</string>
     <string name="expl_text_divisores_1">▻ Divisez le nombre successivement par le nombre premier le plus bas, afin d\'obtenir une division exacte, jusqu\'à obtenir 1:</string>
@@ -162,6 +163,12 @@
     <string name="getProFeature">Obtenez cette fonctionnalité et bien d\'autres sur la version PRO</string>
     <string name="nav_buy_pro">Obtenez la version PRO sans annonces</string>
     <string name="adSubtitle">Cliquez ici pour le consulter sur PlayStore</string>
+    <string name="help_text_primorial">En mathématiques, et plus particulièrement dans la théorie des nombres, primorial est une fonction de nombres naturels à des nombres naturels similaires à la fonction factorielle, mais plutôt que de multiplier successivement des nombres entiers positifs, seuls les nombres premiers sont multipliés. Primorial d\'un nombre est désigné par n#.</string>
+    <string name="action_ajuda_primorial">Comment calculer n#</string>
+    <string name="calculate_primorial_title">Calculer Primorial d\'un nombre</string>
+    <string name="home_primorial_description">▸ Calculer Primorial d\'un nombre n#</string>
+    <string name="nav_primorial">Calculer Primorial n#</string>
+    <string name="zeroPrimorial">Nombres > 0</string>
 
 </resources>
 

@@ -19,6 +19,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.text.Editable;
 import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
@@ -42,8 +43,8 @@ import android.widget.Toast;
 
 import com.sergiocruz.Matematica.R;
 import com.sergiocruz.Matematica.activity.AboutActivity;
-import com.sergiocruz.Matematica.activity.MainActivity;
 import com.sergiocruz.Matematica.activity.SettingsActivity;
+import com.sergiocruz.Matematica.helper.Ads;
 import com.sergiocruz.Matematica.helper.CreateCardView;
 import com.sergiocruz.Matematica.helper.GetPro;
 import com.sergiocruz.Matematica.helper.MenuHelper;
@@ -160,7 +161,7 @@ public class MDCFragment extends Fragment {
         }
 
         if (id == R.id.action_ajuda) {
-            ViewGroup history = (ViewGroup) getActivity().findViewById(R.id.history);
+            ViewGroup history = getActivity().findViewById(R.id.history);
             String help_divisores = getString(R.string.help_text_mdc);
             SpannableStringBuilder ssb = new SpannableStringBuilder(help_divisores);
             CreateCardView.create(history, ssb, getActivity());
@@ -183,102 +184,39 @@ public class MDCFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        MainActivity.getAds();
+        Ads.showIn(getContext(), view.findViewById(R.id.adView));
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_mdc, container, false);
-        mdc_num_1 = (EditText) view.findViewById(R.id.mdc_num_1);
-        mdc_num_2 = (EditText) view.findViewById(R.id.mdc_num_2);
-        mdc_num_3 = (EditText) view.findViewById(R.id.mdc_num_3);
-        mdc_num_4 = (EditText) view.findViewById(R.id.mdc_num_4);
-        mdc_num_5 = (EditText) view.findViewById(R.id.mdc_num_5);
-        mdc_num_6 = (EditText) view.findViewById(R.id.mdc_num_6);
-        mdc_num_7 = (EditText) view.findViewById(R.id.mdc_num_7);
-        mdc_num_8 = (EditText) view.findViewById(R.id.mdc_num_8);
+        mdc_num_1 = view.findViewById(R.id.mdc_num_1);
+        mdc_num_2 = view.findViewById(R.id.mdc_num_2);
+        mdc_num_3 = view.findViewById(R.id.mdc_num_3);
+        mdc_num_4 = view.findViewById(R.id.mdc_num_4);
+        mdc_num_5 = view.findViewById(R.id.mdc_num_5);
+        mdc_num_6 = view.findViewById(R.id.mdc_num_6);
+        mdc_num_7 = view.findViewById(R.id.mdc_num_7);
+        mdc_num_8 = view.findViewById(R.id.mdc_num_8);
 
-        Button button = (Button) view.findViewById(R.id.button_calc_mdc);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                calc_mdc(view);
-            }
-        });
+        Button button = view.findViewById(R.id.button_calc_mdc);
+        button.setOnClickListener(v -> calc_mdc(view));
 
-        Button clearTextBtn_1 = (Button) view.findViewById(R.id.btn_clear_1);
-        clearTextBtn_1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mdc_num_1.setText("");
-            }
-        });
-        Button clearTextBtn_2 = (Button) view.findViewById(R.id.btn_clear_2);
-        clearTextBtn_2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mdc_num_2.setText("");
-            }
-        });
-        Button clearTextBtn_3 = (Button) view.findViewById(R.id.btn_clear_3);
-        clearTextBtn_3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mdc_num_3.setText("");
-            }
-        });
-        Button clearTextBtn_4 = (Button) view.findViewById(R.id.btn_clear_4);
-        clearTextBtn_4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mdc_num_4.setText("");
-            }
-        });
-        Button clearTextBtn_5 = (Button) view.findViewById(R.id.btn_clear_5);
-        clearTextBtn_5.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mdc_num_5.setText("");
-            }
-        });
-        Button clearTextBtn_6 = (Button) view.findViewById(R.id.btn_clear_6);
-        clearTextBtn_6.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mdc_num_6.setText("");
-            }
-        });
-        Button clearTextBtn_7 = (Button) view.findViewById(R.id.btn_clear_7);
-        clearTextBtn_7.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mdc_num_7.setText("");
-            }
-        });
-        Button clearTextBtn_8 = (Button) view.findViewById(R.id.btn_clear_8);
-        clearTextBtn_8.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mdc_num_8.setText("");
-            }
-        });
+        view.findViewById(R.id.btn_clear_1).setOnClickListener(v -> mdc_num_1.setText(""));
+        view.findViewById(R.id.btn_clear_2).setOnClickListener(v -> mdc_num_2.setText(""));
+        view.findViewById(R.id.btn_clear_3).setOnClickListener(v -> mdc_num_3.setText(""));
+        view.findViewById(R.id.btn_clear_4).setOnClickListener(v -> mdc_num_4.setText(""));
+        view.findViewById(R.id.btn_clear_5).setOnClickListener(v -> mdc_num_5.setText(""));
+        view.findViewById(R.id.btn_clear_6).setOnClickListener(v -> mdc_num_6.setText(""));
+        view.findViewById(R.id.btn_clear_7).setOnClickListener(v -> mdc_num_7.setText(""));
+        view.findViewById(R.id.btn_clear_8).setOnClickListener(v -> mdc_num_8.setText(""));
 
-        ImageButton add_mdc = (ImageButton) view.findViewById(R.id.button_add_mdc);
-        add_mdc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                add_mdc(view);
-            }
-        });
+        ImageButton add_mdc = view.findViewById(R.id.button_add_mdc);
+        add_mdc.setOnClickListener(v -> add_mdc(view));
 
-        ImageButton remove_mdc = (ImageButton) view.findViewById(R.id.button_remove_mdc);
-        remove_mdc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                remove_mdc(view);
-            }
-        });
+        ImageButton remove_mdc = view.findViewById(R.id.button_remove_mdc);
+        remove_mdc.setOnClickListener(v -> remove_mdc(view));
 
         mdc_num_1.addTextChangedListener(new TextWatcher() {
             Long num1;
@@ -291,17 +229,16 @@ public class MDCFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.toString().equals("")) {
-                    return;
-                }
-                try {
-                    // Tentar converter o string para long
-                    num1 = parseLong(s.toString());
-                } catch (Exception e) {
-                    mdc_num_1.setText(oldnum1);
-                    mdc_num_1.setSelection(mdc_num_1.getText().length()); //Colocar o cursor no final do texto
-                    showToast();
-                    return;
+                if (!TextUtils.isEmpty(s)) {
+                    try {
+                        // Tentar converter o string para long
+                        num1 = parseLong(s.toString());
+
+                    } catch (Exception e) {
+                        mdc_num_1.setText(oldnum1);
+                        mdc_num_1.setSelection(mdc_num_1.getText().length());
+                        showToast();
+                    }
                 }
             }
 
@@ -318,22 +255,20 @@ public class MDCFragment extends Fragment {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 oldnum2 = s.toString();
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.toString().equals("")) {
-                    return;
-                }
-                try {
-                    // Tentar converter o string para long
-                    num2 = parseLong(s.toString());
-                } catch (Exception e) {
-                    mdc_num_2.setText(oldnum2);
-                    mdc_num_2.setSelection(mdc_num_2.getText().length());
-                    showToast();
-                    return;
+                if (!TextUtils.isEmpty(s)) {
+                    try {
+                        // Tentar converter o string para long
+                        num2 = parseLong(s.toString());
+                    } catch (Exception e) {
+                        mdc_num_2.setText(oldnum2);
+                        mdc_num_2.setSelection(mdc_num_2.getText().length());
+                        showToast();
+
+                    }
                 }
             }
 
@@ -353,18 +288,16 @@ public class MDCFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.toString().equals("")) {
-                    return;
-                }
-                try {
-                    // Tentar converter o string para long
-                    num3 = parseLong(s.toString());
+                if (!TextUtils.isEmpty(s)) {
+                    try {
+                        // Tentar converter o string para long
+                        num3 = parseLong(s.toString());
 
-                } catch (Exception e) {
-                    mdc_num_3.setText(oldnum3);
-                    mdc_num_3.setSelection(mdc_num_3.getText().length());
-                    showToast();
-                    return;
+                    } catch (Exception e) {
+                        mdc_num_3.setText(oldnum3);
+                        mdc_num_3.setSelection(mdc_num_3.getText().length());
+                        showToast();
+                    }
                 }
             }
 
@@ -385,18 +318,15 @@ public class MDCFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.toString().equals("")) {
-                    return;
-                }
-                try {
-                    // Tentar converter o string para long
-                    num4 = parseLong(s.toString());
-
-                } catch (Exception e) {
-                    mdc_num_4.setText(oldnum4);
-                    mdc_num_4.setSelection(mdc_num_4.getText().length());
-                    showToast();
-                    return;
+                if (!TextUtils.isEmpty(s)) {
+                    try {
+                        // Tentar converter o string para long
+                        num4 = parseLong(s.toString());
+                    } catch (Exception e) {
+                        mdc_num_4.setText(oldnum4);
+                        mdc_num_4.setSelection(mdc_num_4.getText().length());
+                        showToast();
+                    }
                 }
             }
 
@@ -417,19 +347,17 @@ public class MDCFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.toString().equals("")) {
-                    return;
+                if (!TextUtils.isEmpty(s)) {
+                    try {
+                        // Tentar converter o string para long
+                        num5 = parseLong(s.toString());
+                    } catch (Exception e) {
+                        mdc_num_5.setText(oldnum5);
+                        mdc_num_5.setSelection(mdc_num_5.getText().length());
+                        showToast();
+                    }
                 }
-                try {
-                    // Tentar converter o string para long
-                    num5 = parseLong(s.toString());
 
-                } catch (Exception e) {
-                    mdc_num_5.setText(oldnum5);
-                    mdc_num_5.setSelection(mdc_num_5.getText().length());
-                    showToast();
-                    return;
-                }
             }
 
             @Override
@@ -448,17 +376,16 @@ public class MDCFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.toString().equals("")) {
-                    return;
-                }
-                try {
-                    // Tentar converter o string para long
-                    num6 = parseLong(s.toString());
-                } catch (Exception e) {
-                    mdc_num_6.setText(oldnum6);
-                    mdc_num_6.setSelection(mdc_num_6.getText().length());
-                    showToast();
-                    return;
+                if (!TextUtils.isEmpty(s)) {
+                    try {
+                        // Tentar converter o string para long
+                        num6 = parseLong(s.toString());
+                    } catch (Exception e) {
+                        mdc_num_6.setText(oldnum6);
+                        mdc_num_6.setSelection(mdc_num_6.getText().length());
+                        showToast();
+
+                    }
                 }
             }
 
@@ -478,17 +405,15 @@ public class MDCFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.toString().equals("")) {
-                    return;
-                }
-                try {
-                    // Tentar converter o string para long
-                    num7 = parseLong(s.toString());
-                } catch (Exception e) {
-                    mdc_num_7.setText(oldnum7);
-                    mdc_num_7.setSelection(mdc_num_7.getText().length());
-                    showToast();
-                    return;
+                if (!TextUtils.isEmpty(s)) {
+                    try {
+                        // Tentar converter o string para long
+                        num7 = parseLong(s.toString());
+                    } catch (Exception e) {
+                        mdc_num_7.setText(oldnum7);
+                        mdc_num_7.setSelection(mdc_num_7.getText().length());
+                        showToast();
+                    }
                 }
             }
 
@@ -508,17 +433,15 @@ public class MDCFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.toString().equals("")) {
-                    return;
-                }
-                try {
-                    // Tentar converter o string para long
-                    num8 = parseLong(s.toString());
-                } catch (Exception e) {
-                    mdc_num_8.setText(oldnum8);
-                    mdc_num_8.setSelection(mdc_num_8.getText().length());
-                    showToast();
-                    return;
+                if (!TextUtils.isEmpty(s)) {
+                    try {
+                        // Tentar converter o string para long
+                        num8 = parseLong(s.toString());
+                    } catch (Exception e) {
+                        mdc_num_8.setText(oldnum8);
+                        mdc_num_8.setSelection(mdc_num_8.getText().length());
+                        showToast();
+                    }
                 }
             }
 
@@ -532,17 +455,17 @@ public class MDCFragment extends Fragment {
 
     public void add_mdc(View view) {
 
-        LinearLayout ll_34 = (LinearLayout) view.findViewById(R.id.linear_layout_34);
-        LinearLayout ll_56 = (LinearLayout) view.findViewById(R.id.linear_layout_56);
-        LinearLayout ll_78 = (LinearLayout) view.findViewById(R.id.linear_layout_78);
-        FrameLayout f_3 = (FrameLayout) view.findViewById(R.id.frame_3);
-        FrameLayout f_4 = (FrameLayout) view.findViewById(R.id.frame_4);
-        FrameLayout f_5 = (FrameLayout) view.findViewById(R.id.frame_5);
-        FrameLayout f_6 = (FrameLayout) view.findViewById(R.id.frame_6);
-        FrameLayout f_7 = (FrameLayout) view.findViewById(R.id.frame_7);
-        FrameLayout f_8 = (FrameLayout) view.findViewById(R.id.frame_8);
-        ImageButton add_one = (ImageButton) view.findViewById(R.id.button_add_mdc);
-        ImageButton less_one = (ImageButton) view.findViewById(R.id.button_remove_mdc);
+        LinearLayout ll_34 = view.findViewById(R.id.linear_layout_34);
+        LinearLayout ll_56 = view.findViewById(R.id.linear_layout_56);
+        LinearLayout ll_78 = view.findViewById(R.id.linear_layout_78);
+        FrameLayout f_3 = view.findViewById(R.id.frame_3);
+        FrameLayout f_4 = view.findViewById(R.id.frame_4);
+        FrameLayout f_5 = view.findViewById(R.id.frame_5);
+        FrameLayout f_6 = view.findViewById(R.id.frame_6);
+        FrameLayout f_7 = view.findViewById(R.id.frame_7);
+        FrameLayout f_8 = view.findViewById(R.id.frame_8);
+        ImageButton add_one = view.findViewById(R.id.button_add_mdc);
+        ImageButton less_one = view.findViewById(R.id.button_remove_mdc);
 
         boolean ll_34_visibe = ll_34.getVisibility() == View.VISIBLE;
         boolean f3_visible = f_3.getVisibility() == View.VISIBLE;
@@ -599,19 +522,19 @@ public class MDCFragment extends Fragment {
 
     public void remove_mdc(View view) {
 
-        LinearLayout ll_34 = (LinearLayout) view.findViewById(R.id.linear_layout_34);
-        LinearLayout ll_56 = (LinearLayout) view.findViewById(R.id.linear_layout_56);
-        LinearLayout ll_78 = (LinearLayout) view.findViewById(R.id.linear_layout_78);
+        LinearLayout ll_34 = view.findViewById(R.id.linear_layout_34);
+        LinearLayout ll_56 = view.findViewById(R.id.linear_layout_56);
+        LinearLayout ll_78 = view.findViewById(R.id.linear_layout_78);
 
-        FrameLayout f_3 = (FrameLayout) view.findViewById(R.id.frame_3);
-        FrameLayout f_4 = (FrameLayout) view.findViewById(R.id.frame_4);
-        FrameLayout f_5 = (FrameLayout) view.findViewById(R.id.frame_5);
-        FrameLayout f_6 = (FrameLayout) view.findViewById(R.id.frame_6);
-        FrameLayout f_7 = (FrameLayout) view.findViewById(R.id.frame_7);
-        FrameLayout f_8 = (FrameLayout) view.findViewById(R.id.frame_8);
+        FrameLayout f_3 = view.findViewById(R.id.frame_3);
+        FrameLayout f_4 = view.findViewById(R.id.frame_4);
+        FrameLayout f_5 = view.findViewById(R.id.frame_5);
+        FrameLayout f_6 = view.findViewById(R.id.frame_6);
+        FrameLayout f_7 = view.findViewById(R.id.frame_7);
+        FrameLayout f_8 = view.findViewById(R.id.frame_8);
 
-        ImageButton add_one = (ImageButton) view.findViewById(R.id.button_add_mdc);
-        ImageButton less_one = (ImageButton) view.findViewById(R.id.button_remove_mdc);
+        ImageButton add_one = view.findViewById(R.id.button_add_mdc);
+        ImageButton less_one = view.findViewById(R.id.button_remove_mdc);
 
         boolean ll_34_visibe = ll_34.getVisibility() == View.VISIBLE;
         boolean f3_visible = f_3.getVisibility() == View.VISIBLE;
@@ -683,10 +606,10 @@ public class MDCFragment extends Fragment {
 
         long num1, num2, num3, num4, num5, num6, num7, num8;
 
-        ArrayList<BigInteger> numbers = new ArrayList<BigInteger>();
-        ArrayList<Long> long_numbers = new ArrayList<Long>();
+        ArrayList<BigInteger> numbers = new ArrayList<>();
+        ArrayList<Long> long_numbers = new ArrayList<>();
 
-        if (!str_num1.equals("")) {
+        if (!TextUtils.isEmpty(str_num1)) {
             try {
                 // Tentar converter o string para long
                 num1 = parseLong(str_num1);
@@ -703,7 +626,7 @@ public class MDCFragment extends Fragment {
                 return;
             }
         }
-        if (!str_num2.equals("")) {
+        if (!TextUtils.isEmpty(str_num2)) {
             try {
                 // Tentar converter o string para long
                 num2 = parseLong(str_num2);
@@ -720,7 +643,7 @@ public class MDCFragment extends Fragment {
                 return;
             }
         }
-        if (!str_num3.equals("")) {
+        if (!TextUtils.isEmpty(str_num3)) {
             try {
                 // Tentar converter o string para long
                 num3 = parseLong(str_num3);
@@ -737,7 +660,7 @@ public class MDCFragment extends Fragment {
                 return;
             }
         }
-        if (!str_num4.equals("")) {
+        if (!TextUtils.isEmpty(str_num4)) {
             try {
                 // Tentar converter o string para long
                 num4 = parseLong(str_num4);
@@ -754,7 +677,7 @@ public class MDCFragment extends Fragment {
                 return;
             }
         }
-        if (!str_num5.equals("")) {
+        if (!TextUtils.isEmpty(str_num5)) {
             try {
                 // Tentar converter o string para long
                 num5 = parseLong(str_num5);
@@ -771,7 +694,7 @@ public class MDCFragment extends Fragment {
                 return;
             }
         }
-        if (!str_num6.equals("")) {
+        if (!TextUtils.isEmpty(str_num6)) {
             try {
                 // Tentar converter o string para long
                 num6 = parseLong(str_num6);
@@ -789,7 +712,7 @@ public class MDCFragment extends Fragment {
             }
         }
 
-        if (!str_num7.equals("")) {
+        if (!TextUtils.isEmpty(str_num7)) {
             try {
                 // Tentar converter o string para long
                 num7 = parseLong(str_num7);
@@ -807,7 +730,7 @@ public class MDCFragment extends Fragment {
             }
         }
 
-        if (!str_num8.equals("")) {
+        if (!TextUtils.isEmpty(str_num8)) {
             try {
                 // Tentar converter o string para long
                 num8 = parseLong(str_num8);
@@ -890,7 +813,7 @@ public class MDCFragment extends Fragment {
                 }));
 
 
-        LinearLayout history = (LinearLayout) view.findViewById(R.id.history);
+        LinearLayout history = view.findViewById(R.id.history);
         // Add cardview to history layout at the top (index 0)
         history.addView(cardview, 0);
 
@@ -968,22 +891,19 @@ public class MDCFragment extends Fragment {
         TextView gradient_separator = getGradientSeparator();
 
         final Boolean[] isExpanded = {false};
-        explainLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                View explView = ((CardView) view.getParent().getParent().getParent()).findViewWithTag("ll_vertical_expl");
-                if (!isExpanded[0]) {
-                    ((TextView) view).setText(ssb_hide_expl);
-                    //explView.setVisibility(View.VISIBLE);
-                    expandIt(explView);
-                    isExpanded[0] = true;
+        explainLink.setOnClickListener(view -> {
+            View explView = ((CardView) view.getParent().getParent().getParent()).findViewWithTag("ll_vertical_expl");
+            if (!isExpanded[0]) {
+                ((TextView) view).setText(ssb_hide_expl);
+                //explView.setVisibility(View.VISIBLE);
+                expandIt(explView);
+                isExpanded[0] = true;
 
-                } else if (isExpanded[0]) {
-                    ((TextView) view).setText(ssb_show_expl);
-                    //explView.setVisibility(View.GONE);
-                    collapseIt(explView);
-                    isExpanded[0] = false;
-                }
+            } else if (isExpanded[0]) {
+                ((TextView) view).setText(ssb_show_expl);
+                //explView.setVisibility(View.GONE);
+                collapseIt(explView);
+                isExpanded[0] = false;
             }
         });
 

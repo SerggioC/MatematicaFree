@@ -40,8 +40,8 @@ import android.widget.Toast;
 
 import com.sergiocruz.Matematica.R;
 import com.sergiocruz.Matematica.activity.AboutActivity;
-import com.sergiocruz.Matematica.activity.MainActivity;
 import com.sergiocruz.Matematica.activity.SettingsActivity;
+import com.sergiocruz.Matematica.helper.Ads;
 import com.sergiocruz.Matematica.helper.GetPro;
 
 import java.text.DecimalFormat;
@@ -93,7 +93,7 @@ public class PrimesTableFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        MainActivity.getAds();
+        Ads.showIn(getContext(), view.findViewById(R.id.adView));
     }
 
     @Override

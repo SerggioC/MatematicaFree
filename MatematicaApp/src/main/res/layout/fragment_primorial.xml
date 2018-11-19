@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.sergiocruz.Matematica.fragment.DivisoresFragment">
+    tools:context="com.sergiocruz.Matematica.fragment.PrimorialFragment">
 
     <com.google.android.gms.ads.AdView
         android:id="@+id/adView"

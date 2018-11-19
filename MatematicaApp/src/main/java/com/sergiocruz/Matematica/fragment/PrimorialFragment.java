@@ -43,8 +43,8 @@ import android.widget.Toast;
 
 import com.sergiocruz.Matematica.R;
 import com.sergiocruz.Matematica.activity.AboutActivity;
-import com.sergiocruz.Matematica.activity.MainActivity;
 import com.sergiocruz.Matematica.activity.SettingsActivity;
+import com.sergiocruz.Matematica.helper.Ads;
 import com.sergiocruz.Matematica.helper.CreateCardView;
 import com.sergiocruz.Matematica.helper.GetPro;
 import com.sergiocruz.Matematica.helper.MenuHelper;
@@ -52,7 +52,6 @@ import com.sergiocruz.Matematica.helper.SwipeToDismissTouchListener;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collections;
 
 import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 import static java.lang.Long.parseLong;
@@ -65,7 +64,9 @@ import static java.lang.Long.parseLong;
 
 public class PrimorialFragment extends Fragment {
 
-    public AsyncTask<Long, Double, ArrayList<Long>> BG_Operation = new BackGroundOperation();
+    final static int sieveLimit = 1_300_000;
+    static boolean[] notPrime = sieve(sieveLimit);
+    public AsyncTask<Long, Double, BigInteger> BG_Operation = new BackGroundOperation();
     int cv_width, height_dip;
     View progressBar;
     Fragment thisFragment = this;
@@ -79,6 +80,35 @@ public class PrimorialFragment extends Fragment {
 
     public PrimorialFragment() {
         // Required empty public constructor
+    }
+
+    static BigInteger primorial(int n) {
+        if (n == 0)
+            return BigInteger.ONE;
+
+        BigInteger result = BigInteger.ONE;
+        for (int i = 0; i < sieveLimit && n > 0; i++) {
+            if (notPrime[i])
+                continue;
+            result = result.multiply(BigInteger.valueOf(i));
+            n--;
+        }
+        return result;
+    }
+
+    public static boolean[] sieve(int limit) {
+        boolean[] composite = new boolean[limit];
+        composite[0] = composite[1] = true;
+
+        int max = (int) Math.sqrt(limit);
+        for (int n = 2; n <= max; n++) {
+            if (!composite[n]) {
+                for (int k = n * n; k < limit; k += n) {
+                    composite[k] = true;
+                }
+            }
+        }
+        return composite;
     }
 
     @Override
@@ -98,7 +128,7 @@ public class PrimorialFragment extends Fragment {
 
         inflater.inflate(R.menu.menu_main, menu);
         inflater.inflate(R.menu.menu_sub_main, menu);
-        inflater.inflate(R.menu.menu_help_divisores, menu);
+        inflater.inflate(R.menu.menu_help_primorial, menu);
     }
 
     @Override
@@ -251,9 +281,8 @@ public class PrimorialFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        MainActivity.getAds();
+        Ads.showIn(getContext(), view.findViewById(R.id.adView));
     }
-
 
     @Override
     public void onDestroy() {
@@ -265,7 +294,6 @@ public class PrimorialFragment extends Fragment {
             thetoast.show();
         }
     }
-
 
     public void cancel_AsyncTask() {
         if (BG_Operation.getStatus() == AsyncTask.Status.RUNNING) {
@@ -295,6 +323,12 @@ public class PrimorialFragment extends Fragment {
         try {
             // Tentar converter o string para long
             num = Long.parseLong(editnumText);
+            if (num == 0L) {
+                Toast thetoast = Toast.makeText(mActivity, R.string.zeroPrimorial, Toast.LENGTH_LONG);
+                thetoast.setGravity(Gravity.CENTER, 0, 0);
+                thetoast.show();
+                return;
+            }
         } catch (Exception e) {
             Toast thetoast = Toast.makeText(mActivity, R.string.numero_alto, Toast.LENGTH_LONG);
             thetoast.setGravity(Gravity.CENTER, 0, 0);
@@ -308,131 +342,6 @@ public class PrimorialFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-    }
-
-
-    public class BackGroundOperation extends AsyncTask<Long, Double, ArrayList<Long>> {
-
-        @Override
-        public void onPreExecute() {
-            button.setClickable(false);
-            button.setText(R.string.working);
-            cancelButton.setVisibility(View.VISIBLE);
-            hideKeyboard();
-            CardView cardView1 = (CardView) mActivity.findViewById(R.id.card_view_1);
-            cv_width = cardView1.getWidth();
-            height_dip = (int) (4 * scale + 0.5f);
-            progressBar = (View) mActivity.findViewById(R.id.progress);
-            progressBar.setLayoutParams(new LinearLayout.LayoutParams(10, height_dip));
-            progressBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected ArrayList<Long> doInBackground(Long... num) {
-
-            /*
-            *
-            * Performance update
-            * Primeiro obtém os fatores primos depois multiplica-os
-            *
-            * */
-            ArrayList<Long> divisores = new ArrayList<>(); //divisores = números primos?
-            Long number = num[0];
-            double progress;
-            double oldProgress = 0f;
-
-            while (number % 2L == 0) {
-                divisores.add(2L);
-                number /= 2;
-            }
-
-            for (long i = 3; i <= number / i; i += 2) {
-                while (number % i == 0) {
-                    divisores.add(i);
-                    number /= i;
-                }
-                progress = (double) i / (((double)number / (double)i));
-                if (progress - oldProgress > 0.1d) {
-                    publishProgress(progress, (double) i);
-                    oldProgress = progress;
-                }
-                if (isCancelled()) break;
-            }
-            if (number > 1) {
-                divisores.add(number);
-            }
-
-            ArrayList<Long> AllDivisores = new ArrayList<Long>();
-            int size;
-            AllDivisores.add(1L);
-            for (int i = 0; i < divisores.size(); i++) {
-                size = AllDivisores.size();
-                for (int j = 0; j < size; j++) {
-                    long val = AllDivisores.get(j) * divisores.get(i);
-                    if (!AllDivisores.contains(val)) {
-                        AllDivisores.add(val);
-                    }
-                }
-            }
-            Collections.sort(AllDivisores);
-
-            return AllDivisores;
-
-        }
-
-        @Override
-        public void onProgressUpdate(Double... values) {
-            if (thisFragment != null && thisFragment.isVisible()) {
-                progressBar.setLayoutParams(new LinearLayout.LayoutParams((int) Math.round(values[0] * cv_width), height_dip));
-            }
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<Long> result) {
-            if (thisFragment != null && thisFragment.isVisible()) {
-                ArrayList<Long> nums = result;
-                String str = "";
-                for (long i : nums) {
-                    str = str + ", " + i;
-                    if (i == 1L) {
-                        str = num + " " + getString(R.string.has) + " " + nums.size() + " " + getString(R.string.divisores_) + "\n{" + i;
-                    }
-                }
-                String str_divisores = str + "}";
-                SpannableStringBuilder ssb = new SpannableStringBuilder(str_divisores);
-                if (nums.size() == 2) {
-                    String prime_number = "\n" + getString(R.string._numero_primo);
-                    ssb.append(prime_number);
-                    ssb.setSpan(new ForegroundColorSpan(Color.parseColor("#29712d")), ssb.length() - prime_number.length(), ssb.length(), SPAN_EXCLUSIVE_EXCLUSIVE);
-                    ssb.setSpan(new RelativeSizeSpan(0.9f), ssb.length() - prime_number.length(), ssb.length(), SPAN_EXCLUSIVE_EXCLUSIVE);
-                }
-                createCardView(ssb);
-                resetButtons();
-            }
-        }
-
-        @Override
-        protected void onCancelled(ArrayList<Long> parcial) {
-            super.onCancelled(parcial);
-            if (thisFragment != null && thisFragment.isVisible()) {
-                ArrayList<Long> nums = parcial;
-                String str = "";
-                for (long i : nums) {
-                    str = str + ", " + i;
-                    if (i == 1L) {
-                        str = getString(R.string.divisors_of) + " " + num + ":\n" + "{" + i;
-                    }
-                }
-                String str_divisores = str + "}";
-                SpannableStringBuilder ssb = new SpannableStringBuilder(str_divisores);
-                String incomplete_calc = "\n" + getString(R.string._incomplete_calc);
-                ssb.append(incomplete_calc);
-                ssb.setSpan(new ForegroundColorSpan(Color.RED), ssb.length() - incomplete_calc.length(), ssb.length(), SPAN_EXCLUSIVE_EXCLUSIVE);
-                ssb.setSpan(new RelativeSizeSpan(0.8f), ssb.length() - incomplete_calc.length(), ssb.length(), SPAN_EXCLUSIVE_EXCLUSIVE);
-                createCardView(ssb);
-                resetButtons();
-            }
-        }
     }
 
     private void resetButtons() {
@@ -496,44 +405,105 @@ public class PrimorialFragment extends Fragment {
                     }
                 }));
 
-
         ll_vertical_root.addView(textView);
 
-        // add the textview to the cardview
+        // add the root layout to the cardview
         cardview.addView(ll_vertical_root);
     }
 
-    final static int sieveLimit = 1_300_000;
-    static boolean[] notPrime = sieve(sieveLimit);
+    public class BackGroundOperation extends AsyncTask<Long, Double, BigInteger> {
+        Long number;
+        ArrayList<Long> primes = new ArrayList<>();
 
-
-    static BigInteger primorial(int n) {
-        if (n == 0)
-            return BigInteger.ONE;
-
-        BigInteger result = BigInteger.ONE;
-        for (int i = 0; i < sieveLimit && n > 0; i++) {
-            if (notPrime[i])
-                continue;
-            result = result.multiply(BigInteger.valueOf(i));
-            n--;
+        @Override
+        public void onPreExecute() {
+            button.setClickable(false);
+            button.setText(R.string.working);
+            cancelButton.setVisibility(View.VISIBLE);
+            hideKeyboard();
+            CardView cardView1 = (CardView) mActivity.findViewById(R.id.card_view_1);
+            cv_width = cardView1.getWidth();
+            height_dip = (int) (4 * scale + 0.5f);
+            progressBar = (View) mActivity.findViewById(R.id.progress);
+            progressBar.setLayoutParams(new LinearLayout.LayoutParams(10, height_dip));
+            progressBar.setVisibility(View.VISIBLE);
         }
-        return result;
-    }
 
-    public static boolean[] sieve(int limit) {
-        boolean[] composite = new boolean[limit];
-        composite[0] = composite[1] = true;
+        @Override
+        protected BigInteger doInBackground(Long... num) {
+            number = num[0];
+            if (number == 1L) return BigInteger.ONE;
+            if (number == 2L) return BigInteger.valueOf(2L);
 
-        int max = (int) Math.sqrt(limit);
-        for (int n = 2; n <= max; n++) {
-            if (!composite[n]) {
-                for (int k = n * n; k < limit; k += n) {
-                    composite[k] = true;
+            primes.add(1L);
+            primes.add(2L);
+
+            double progress;
+            double oldProgress = 0d;
+
+            for (long i = 3L; i <= number; i++) {
+                boolean isPrime = true;
+                if (i % 2 == 0) isPrime = false;
+                if (isPrime) {
+                    for (long j = 3; j < i; j = j + 2) {
+                        if (i % j == 0) {
+                            isPrime = false;
+                            break;
+                        }
+                    }
                 }
+                if (isPrime) {
+                    primes.add(i);
+                }
+                progress = (double) i / (double) number;
+                if (progress - oldProgress > 0.05d) {
+                    publishProgress(progress);
+                    oldProgress = progress;
+                }
+                if (isCancelled()) break;
+            }
+
+            BigInteger primorial = BigInteger.ONE;
+            for (int j = 0; j < primes.size(); j++) {
+                primorial = primorial.multiply(BigInteger.valueOf(primes.get(j)));
+            }
+
+            return primorial;
+
+        }
+
+        @Override
+        public void onProgressUpdate(Double... values) {
+            if (thisFragment != null && thisFragment.isVisible()) {
+                progressBar.setLayoutParams(new LinearLayout.LayoutParams((int) Math.round(values[0] * cv_width), height_dip));
             }
         }
-        return composite;
+
+        @Override
+        protected void onPostExecute(BigInteger result) {
+            if (thisFragment != null && thisFragment.isVisible()) {
+                BigInteger primorial = result;
+                String text = number + "#=\n" + primorial;
+                SpannableStringBuilder ssb = new SpannableStringBuilder(text);
+                createCardView(ssb);
+                resetButtons();
+            }
+        }
+
+        @Override
+        protected void onCancelled(BigInteger parcial) {
+            super.onCancelled(parcial);
+            if (thisFragment != null && thisFragment.isVisible()) {
+                String ssb_string = primes.get(primes.size() - 1) + "#=\n" + parcial;
+                SpannableStringBuilder ssb = new SpannableStringBuilder(ssb_string);
+                String incomplete_calc = "\n" + getString(R.string._incomplete_calc);
+                ssb.append(incomplete_calc);
+                ssb.setSpan(new ForegroundColorSpan(Color.RED), ssb.length() - incomplete_calc.length(), ssb.length(), SPAN_EXCLUSIVE_EXCLUSIVE);
+                ssb.setSpan(new RelativeSizeSpan(0.8f), ssb.length() - incomplete_calc.length(), ssb.length(), SPAN_EXCLUSIVE_EXCLUSIVE);
+                createCardView(ssb);
+                resetButtons();
+            }
+        }
     }
 
 
