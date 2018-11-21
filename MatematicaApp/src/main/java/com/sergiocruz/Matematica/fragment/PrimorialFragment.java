@@ -12,7 +12,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -44,7 +43,6 @@ import android.widget.Toast;
 import com.sergiocruz.Matematica.R;
 import com.sergiocruz.Matematica.activity.AboutActivity;
 import com.sergiocruz.Matematica.activity.SettingsActivity;
-import com.sergiocruz.Matematica.helper.Ads;
 import com.sergiocruz.Matematica.helper.CreateCardView;
 import com.sergiocruz.Matematica.helper.GetPro;
 import com.sergiocruz.Matematica.helper.MenuHelper;
@@ -276,12 +274,6 @@ public class PrimorialFragment extends Fragment {
         });
         return view;
 
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        Ads.showIn(getContext(), view.findViewById(R.id.adView));
     }
 
     @Override

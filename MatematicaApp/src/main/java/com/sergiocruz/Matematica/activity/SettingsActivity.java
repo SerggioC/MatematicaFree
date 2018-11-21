@@ -10,7 +10,9 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 
+import com.google.ads.consent.ConsentStatus;
 import com.sergiocruz.Matematica.R;
+import com.sergiocruz.Matematica.helper.Ads;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -28,27 +30,24 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.
      */
-    private Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object value) {
-            String stringValue = value.toString();
-            if (preference instanceof ListPreference) {
-                // For list preferences, look up the correct display value in
-                // the preference's 'entries' list.
-                ListPreference listPreference = (ListPreference) preference;
-                int index = listPreference.findIndexOfValue(stringValue);
+    private Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = (preference, value) -> {
+        String stringValue = value.toString();
+        if (preference instanceof ListPreference) {
+            // For list preferences, look up the correct display value in
+            // the preference's 'entries' list.
+            ListPreference listPreference = (ListPreference) preference;
+            int index = listPreference.findIndexOfValue(stringValue);
 
-                // Set the summary to reflect the new value.
-                preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
+            // Set the summary to reflect the new value.
+            preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
 
 
-            } else {
-                // For all other preferences, set the summary to the value's
-                // simple string representation.
-                preference.setSummary(stringValue);
-            }
-            return true;
+        } else {
+            // For all other preferences, set the summary to the value's
+            // simple string representation.
+            preference.setSummary(stringValue);
         }
+        return true;
     };
 
 
@@ -102,33 +101,58 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         addPreferencesFromResource(R.xml.pref_general);
         bindPreferenceSummaryToValue(findPreference("pref_show_explanation"));
 
-        Preference pref_show_colors = findPreference("pref_show_colors");
-        pref_show_colors.setEnabled(false);
+        Preference prefShowColors = findPreference("pref_show_colors");
+        prefShowColors.setEnabled(false);
 
-        Preference pref_show_performance = findPreference("pref_show_performance");
-        pref_show_performance.setEnabled(false);
+        Preference prefShowPerformance = findPreference("pref_show_performance");
+        prefShowPerformance.setEnabled(false);
 
         final CheckBoxPreference bruteForce = (CheckBoxPreference) findPreference("pref_brute_force_mode");
         final CheckBoxPreference probabilistic = (CheckBoxPreference) findPreference("pref_probabilistic_mode");
 
-        bruteForce.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                probabilistic.setChecked(!bruteForce.isChecked());
-                return true;
-            }
+        bruteForce.setOnPreferenceClickListener(preference -> {
+            probabilistic.setChecked(!bruteForce.isChecked());
+            return true;
         });
 
-        probabilistic.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                bruteForce.setChecked(!probabilistic.isChecked());
-                return true;
-            }
+        probabilistic.setOnPreferenceClickListener(preference -> {
+            bruteForce.setChecked(!probabilistic.isChecked());
+            return true;
         });
 
+
+        Preference prefRevokeAds = findPreference("pref_revoke_ads");
+        String title = "Personalised Ads consent is";
+
+        String consentStatus;
+        switch (Ads.getStatus(getApplicationContext())) {
+            case PERSONALIZED:
+                consentStatus = "enabled";
+                break;
+            case NON_PERSONALIZED:
+                consentStatus = "disabled";
+                break;
+            default:
+                consentStatus = "unknown";
+                break;
+        }
+
+        prefRevokeAds.setSummary(title +  " " + consentStatus);
+
+        prefRevokeAds.setOnPreferenceClickListener(preference -> {
+            //Revoke Ads consent
+            Ads.setStatus(getApplicationContext(), ConsentStatus.UNKNOWN);
+            prefRevokeAds.setSummary(title + " " + "revoked");
+
+            onBackPressed();
+            return true;
+        });
 
     }
+
+
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

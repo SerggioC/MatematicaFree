@@ -46,4 +46,13 @@
             android:summary="Use probabilistic mode for prime factorization."
             android:title="Probabilistic Mode" />
     </PreferenceCategory>
+
+
+    <PreferenceCategory android:title="Targeted Ads Consent" >
+        <Preference android:title="Click here to revoke ads consent"
+            android:key="pref_revoke_ads" />
+    </PreferenceCategory>
+
+
+
 </PreferenceScreen>

@@ -2,6 +2,7 @@ package com.sergiocruz.Matematica.helper;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.ads.consent.ConsentForm;
@@ -22,14 +23,32 @@ public class Ads {
     private static AdRequest.Builder adRequestBuilder;
     private static ConsentForm form;
 
-    public static void showIn(Context context, AdView adView) {
+    @Nullable
+    private static URL getPrivacyPolicyUrl(Context context) {
+        URL privacyUrl = null;
+        try {
+            privacyUrl = new URL(context.getString(R.string.privacy_policy_url));
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return privacyUrl;
+    }
 
+    public static void showIn(Context context, AdView adView) {
         adRequestBuilder = new AdRequest.Builder()
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)        // Emulator
                 .addTestDevice("6543A9731F19E7E829543EE20A1E4E7C"); // P8 lite
-
         checkAdsConsent(context, adView);
+    }
 
+    public static ConsentStatus getStatus(Context context) {
+        ConsentInformation consentInformation = ConsentInformation.getInstance(context);
+        return consentInformation.getConsentStatus();
+    }
+
+    public static void setStatus(Context context, ConsentStatus status) {
+        ConsentInformation consentInformation = ConsentInformation.getInstance(context);
+        consentInformation.setConsentStatus(status);
     }
 
     private static void checkAdsConsent(Context context, AdView adView) {
@@ -69,38 +88,28 @@ public class Ads {
         });
     }
 
-    private static void requestConsent(Context context, AdView adView) {
-        URL privacyUrl = null;
-        try {
-            privacyUrl = new URL(context.getString(R.string.privacy_policy_url));
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
+    public static void requestConsent(Context context, AdView adView) {
+        URL privacyUrl = getPrivacyPolicyUrl(context);
 
         form = new ConsentForm.Builder(context, privacyUrl)
                 .withListener(new ConsentFormListener() {
                     @Override
                     public void onConsentFormLoaded() {
                         // Consent form loaded successfully.
-                        Log.d("Sergio>", "Requesting Consent: onConsentFormLoaded");
                         showForm(adView);
                     }
 
                     @Override
                     public void onConsentFormOpened() {
                         // Consent form was displayed.
-                        Log.d("Sergio>", "Requesting Consent: onConsentFormOpened");
                     }
 
                     @Override
-                    public void onConsentFormClosed(
-                            ConsentStatus consentStatus, Boolean userPrefersAdFree) {
-                        Log.d("Sergio>", "Requesting Consent: onConsentFormClosed");
+                    public void onConsentFormClosed(ConsentStatus consentStatus, Boolean userPrefersAdFree) {
                         if (userPrefersAdFree) {
                             // Buy or Subscribe
                             // TODO buy me for some dollars!
 
-                            Log.d("Sergio>", "Requesting Consent: User prefers AdFree");
                         } else {
                             Log.d("Sergio>", "Requesting Consent: Requesting consent again");
                             switch (consentStatus) {
@@ -129,16 +138,14 @@ public class Ads {
                 .withAdFreeOption()
                 .build();
         form.load();
-        form.show();
     }
-
 
     private static void showForm(AdView adView) {
         if (form != null) {
             form.show();
         } else {
             showNonPersonalizedAds(adView);
-            Log.i("Sergio>", "showForm(): form is null, can't show the consent form to select tailored ads or not or to buy the paid version!" );
+            Log.i("Sergio>", "showForm(): form is null, can't show the consent form to select tailored ads or not or to buy the paid version!");
         }
 
     }

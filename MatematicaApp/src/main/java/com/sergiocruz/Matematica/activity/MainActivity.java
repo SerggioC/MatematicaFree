@@ -3,6 +3,7 @@ package com.sergiocruz.Matematica.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.Preference;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -15,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.sergiocruz.Matematica.R;
 import com.sergiocruz.Matematica.fragment.DivisoresFragment;
@@ -24,8 +26,9 @@ import com.sergiocruz.Matematica.fragment.MDCFragment;
 import com.sergiocruz.Matematica.fragment.MMCFragment;
 import com.sergiocruz.Matematica.fragment.PrimesTableFragment;
 import com.sergiocruz.Matematica.fragment.PrimorialFragment;
+import com.sergiocruz.Matematica.helper.Ads;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Preference.OnPreferenceChangeListener {
 
     // tags used to attach the fragments
     private static final String TAG_HOME = "home";
@@ -48,17 +51,17 @@ public class MainActivity extends AppCompatActivity {
     // flag to load home fragment when user presses back key
     private boolean shouldLoadHomeFragOnBackPress = true;
     private Handler mHandler;
+    private AdView adView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        MobileAds.initialize(this, getString(R.string.ads_application_id));
+        adView = findViewById(R.id.adView);
 
         mHandler = new Handler();
 
@@ -85,9 +88,20 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobileAds.initialize(this, getString(R.string.ads_application_id));
+        Ads.showIn(this, adView);
+    }
+
+    @Override
+    public boolean onPreferenceChange(Preference preference, Object newValue) {
+
+        return false;
+    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {

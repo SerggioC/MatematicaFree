@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,7 +16,6 @@ import android.view.ViewGroup;
 import com.sergiocruz.Matematica.R;
 import com.sergiocruz.Matematica.activity.AboutActivity;
 import com.sergiocruz.Matematica.activity.SettingsActivity;
-import com.sergiocruz.Matematica.helper.Ads;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -86,13 +84,6 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
         //MainActivity.logMe(this, "debug", "onCreateView HomeFragment" );
         return inflater.inflate(R.layout.fragment_home, container, false);
-    }
-
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        Ads.showIn(getContext(), view.findViewById(R.id.adView));
     }
 
     @Override

@@ -42,7 +42,6 @@ import android.widget.Toast;
 import com.sergiocruz.Matematica.R;
 import com.sergiocruz.Matematica.activity.AboutActivity;
 import com.sergiocruz.Matematica.activity.SettingsActivity;
-import com.sergiocruz.Matematica.helper.Ads;
 import com.sergiocruz.Matematica.helper.CreateCardView;
 import com.sergiocruz.Matematica.helper.GetPro;
 import com.sergiocruz.Matematica.helper.MenuHelper;
@@ -215,8 +214,6 @@ public class DivisoresFragment extends Fragment {
 
             }
         });
-
-        Ads.showIn(getContext(), view.findViewById(R.id.adView));
 
         return view;
 
