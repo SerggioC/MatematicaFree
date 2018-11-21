@@ -12,7 +12,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
@@ -44,9 +43,8 @@ import android.widget.Toast;
 import com.sergiocruz.Matematica.R;
 import com.sergiocruz.Matematica.activity.AboutActivity;
 import com.sergiocruz.Matematica.activity.SettingsActivity;
-import com.sergiocruz.Matematica.helper.Ads;
 import com.sergiocruz.Matematica.helper.CreateCardView;
-import com.sergiocruz.Matematica.helper.GetPro;
+import com.sergiocruz.Matematica.helper.GetProLayout;
 import com.sergiocruz.Matematica.helper.MenuHelper;
 import com.sergiocruz.Matematica.helper.SwipeToDismissTouchListener;
 
@@ -58,8 +56,6 @@ import static android.animation.LayoutTransition.CHANGE_DISAPPEARING;
 import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 import static android.widget.LinearLayout.HORIZONTAL;
 import static android.widget.Toast.makeText;
-import static com.sergiocruz.Matematica.fragment.FatorizarFragment.collapseIt;
-import static com.sergiocruz.Matematica.fragment.FatorizarFragment.expandIt;
 import static com.sergiocruz.Matematica.fragment.MMCFragment.CARD_TEXT_SIZE;
 import static java.lang.Long.parseLong;
 
@@ -145,7 +141,7 @@ public class MDCFragment extends Fragment {
         int id = item.getItemId();
 
         if (id == R.id.action_share_history) {
-            GetPro.getItPopup(mActivity);
+            GetProLayout.getItPopup(mActivity);
         }
 
         if (id == R.id.action_clear_all_history) {
@@ -912,7 +908,7 @@ public class MDCFragment extends Fragment {
                 LinearLayout.LayoutParams.WRAP_CONTENT));
         ll_vertical_expl.setOrientation(LinearLayout.VERTICAL);
 
-        LinearLayout ll_horizontal_Pro_ad = GetPro.get_ll_horizontal_pro_ad(mActivity);
+        LinearLayout ll_horizontal_Pro_ad = GetProLayout.get_ll_horizontal_pro_ad(mActivity);
 
         ll_vertical_expl.addView(ll_horizontal_Pro_ad);
         ll_vertical_root.addView(ll_horizontal);

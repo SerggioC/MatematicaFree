@@ -1,2 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string-array name="pref_list_titles">
+        <item>Always show</item>
+        <item>Show when requested</item>
+        <item>Never show</item>
+    </string-array>
+    <string-array name="pref_list_values">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="show_explanation" translatable="false">pref_show_explanation</string>
+
+    <string name="pref_description_title">Application Preferences</string>
+    <string name="pref_colors_title">Show colors</string>
+    <string name="pref_description_colors">Display distinct colors for easy explanations (PRO version only)</string>
+    <string name="pref_description_explanation">Select when to present explanations of the calculations: Always, when asked or never.</string>
+    <string name="pref_description_performance">Display CPU runtime after calculation (PRO version only)</string>
+    <string name="pref_perform_title">Show performance</string>
+    <string name="pref_title_explanation">Show explanations</string>
+    <string name="title_activity_settings">Preferences</string>
+    <string name="show_colors" translatable="false">pref_show_colors</string>
+    <string name="show_performance" translatable="false">pref_show_performance</string>
+    <string name="brute_force" translatable="false">pref_brute_force_mode</string>
+    <string name="probabilistic_mode" translatable="false">pref_probabilistic_mode</string>
+    <string name="revoke_ads" translatable="false">pref_revoke_ads</string>
+
+</resources>

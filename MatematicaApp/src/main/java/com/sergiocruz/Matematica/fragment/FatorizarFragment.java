@@ -1,8 +1,6 @@
 package com.sergiocruz.Matematica.fragment;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -14,13 +12,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.text.Editable;
 import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
@@ -36,8 +34,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.Transformation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -49,7 +45,6 @@ import android.widget.Toast;
 import com.sergiocruz.Matematica.R;
 import com.sergiocruz.Matematica.activity.AboutActivity;
 import com.sergiocruz.Matematica.activity.SettingsActivity;
-import com.sergiocruz.Matematica.helper.Ads;
 import com.sergiocruz.Matematica.helper.CreateCardView;
 import com.sergiocruz.Matematica.helper.MenuHelper;
 import com.sergiocruz.Matematica.helper.SwipeToDismissTouchListener;
@@ -66,68 +61,35 @@ import static android.widget.LinearLayout.HORIZONTAL;
 import static com.sergiocruz.Matematica.R.array.f_colors_xml;
 import static com.sergiocruz.Matematica.R.string.fatorizar_btn;
 import static com.sergiocruz.Matematica.fragment.MMCFragment.CARD_TEXT_SIZE;
+import static com.sergiocruz.Matematica.helper.Utils.collapseIt;
+import static com.sergiocruz.Matematica.helper.Utils.expandIt;
 import static java.lang.Long.parseLong;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link FatorizarFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link FatorizarFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class FatorizarFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    Activity mActivity;
     ArrayList<Integer> fColors;
     /*
-    *   AsyncTask params <Input datatype, progress update datatype, return datatype>
-    * */
+     *   AsyncTask params <Input datatype, progress update datatype, return datatype>
+     * */
     AsyncTask<Long, Float, ArrayList<ArrayList<Long>>> BG_Operation = new BackGroundOperation();
     Button button;
     float scale;
     Fragment thisFragment = this;
     ImageView cancelButton;
     int cv_width, height_dip;
-    LinearLayout history;
+    LinearLayout historyLayout;
     Long num1, startTime;
     SharedPreferences sharedPrefs;
     View progressBar;
-
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-    private OnFragmentInteractionListener mListener;
+    private ViewGroup cardView1;
+    private EditText wditTextNum1;
 
     public FatorizarFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment FatorizarFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static FatorizarFragment newInstance(String param1, String param2) {
-        FatorizarFragment fragment = new FatorizarFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
+    @SuppressWarnings("unused")
     public static ArrayList<Long> getFatoresPrimos(long number) {
-        ArrayList<Long> factoresPrimos = new ArrayList<Long>();
+        ArrayList<Long> factoresPrimos = new ArrayList<>();
         for (long i = 2; i <= number / i; i++) {
             while (number % i == 0) {
                 factoresPrimos.add(i);
@@ -140,54 +102,7 @@ public class FatorizarFragment extends Fragment {
         return factoresPrimos;
     }
 
-    public static void expandIt(final View v) {
-        v.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        final int targetHeight = v.getMeasuredHeight();
-        // Older versions of android (pre API 21) cancel animations for views with a height of 0.
-        v.getLayoutParams().height = 1;
-        v.setVisibility(View.VISIBLE);
-        Animation a = new Animation() {
-            @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-                v.getLayoutParams().height = interpolatedTime == 1
-                        ? LinearLayout.LayoutParams.WRAP_CONTENT
-                        : (int) (targetHeight * interpolatedTime);
-                v.requestLayout();
-            }
-
-            @Override
-            public boolean willChangeBounds() {
-                return true;
-            }
-        };
-        // 1dp/ms
-        a.setDuration((int) (targetHeight / v.getContext().getResources().getDisplayMetrics().density));
-        v.startAnimation(a);
-    }
-
-    public static void collapseIt(final View v) {
-        final int initialHeight = v.getMeasuredHeight();
-        Animation a = new Animation() {
-            @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-                if (interpolatedTime == 1) {
-                    v.setVisibility(View.GONE);
-                } else {
-                    v.getLayoutParams().height = initialHeight - (int) (initialHeight * interpolatedTime);
-                    v.requestLayout();
-                }
-            }
-
-            @Override
-            public boolean willChangeBounds() {
-                return true;
-            }
-        };
-        // 1dp/ms
-        a.setDuration((int) (initialHeight / v.getContext().getResources().getDisplayMetrics().density));
-        v.startAnimation(a);
-    }
-
+    @SuppressWarnings("unused")
     private ArrayList<ArrayList<Long>> getTabelaFatoresPrimos(long number) {
 
         ArrayList<ArrayList<Long>> factoresPrimos = new ArrayList<ArrayList<Long>>();
@@ -216,6 +131,7 @@ public class FatorizarFragment extends Fragment {
         return factoresPrimos;
     }
 
+    @SuppressWarnings("unused")
     private ArrayList<ArrayList<Long>> getTabelaFatoresPrimos2(long number) {
 
         ArrayList<ArrayList<Long>> factoresPrimos = new ArrayList<ArrayList<Long>>();
@@ -255,14 +171,10 @@ public class FatorizarFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-        mActivity = getActivity();
-        scale = mActivity.getResources().getDisplayMetrics().density;
-        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
-        int[] f_colors = mActivity.getResources().getIntArray(f_colors_xml);
+
+        scale = getResources().getDisplayMetrics().density;
+        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        int[] f_colors = getResources().getIntArray(f_colors_xml);
         fColors = new ArrayList<>();
         for (int f_color : f_colors) fColors.add(f_color);
     }
@@ -285,28 +197,28 @@ public class FatorizarFragment extends Fragment {
         int id = item.getItemId();
 
         if (id == R.id.action_share_history) {
-            MenuHelper.share_history(mActivity);
+            MenuHelper.share_history(historyLayout);
         }
 
         if (id == R.id.action_clear_all_history) {
-            MenuHelper.remove_history(mActivity);
+            MenuHelper.remove_history(getContext(), historyLayout);
         }
 
         if (id == R.id.action_ajuda) {
-            ViewGroup history = (ViewGroup) mActivity.findViewById(R.id.history);
+
             String help_divisores = getString(R.string.help_text_fatores);
             SpannableStringBuilder ssb = new SpannableStringBuilder(help_divisores);
-            CreateCardView.create(history, ssb, mActivity);
+            CreateCardView.create(historyLayout, ssb, getActivity());
         }
         if (id == R.id.action_about) {
-            startActivity(new Intent(mActivity, AboutActivity.class));
+            startActivity(new Intent(getContext(), AboutActivity.class));
         }
         if (id == R.id.action_settings) {
-            startActivity(new Intent(mActivity, SettingsActivity.class));
+            startActivity(new Intent(getContext(), SettingsActivity.class));
         }
         if (id == R.id.action_buy_pro) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("market://details?id=com.sergiocruz.MatematicaPro"));
+            intent.setData(Uri.parse(getString(R.string.playstore_url)));
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
@@ -317,12 +229,12 @@ public class FatorizarFragment extends Fragment {
         super.onConfigurationChanged(newConfig);
 //         Checks the orientation of the screen
 //        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-//            Toast.makeText(mActivity, "landscape", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getContext(), "landscape", Toast.LENGTH_SHORT).show();
 //        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
-//            Toast.makeText(mActivity, "portrait", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getContext(), "portrait", Toast.LENGTH_SHORT).show();
 //        }
 
-        Display display = mActivity.getWindowManager().getDefaultDisplay();
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
         int width = size.x;
@@ -336,8 +248,8 @@ public class FatorizarFragment extends Fragment {
 
     public void hideKeyboard() {
         //Hide the keyboard
-        InputMethodManager imm = (InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(mActivity.getCurrentFocus().getWindowToken(), 0);
+        InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
     }
 
     @Override
@@ -346,7 +258,7 @@ public class FatorizarFragment extends Fragment {
 
         if (BG_Operation.getStatus() == AsyncTask.Status.RUNNING) {
             BG_Operation.cancel(true);
-            Toast thetoast = Toast.makeText(mActivity, getString(R.string.canceled_op), Toast.LENGTH_SHORT);
+            Toast thetoast = Toast.makeText(getContext(), getString(R.string.canceled_op), Toast.LENGTH_SHORT);
             thetoast.setGravity(Gravity.CENTER, 0, 0);
             thetoast.show();
         }
@@ -355,7 +267,7 @@ public class FatorizarFragment extends Fragment {
     public void cancel_AsyncTask() {
         if (BG_Operation.getStatus() == AsyncTask.Status.RUNNING) {
             BG_Operation.cancel(true);
-            Toast thetoast = Toast.makeText(mActivity, getString(R.string.canceled_op), Toast.LENGTH_SHORT);
+            Toast thetoast = Toast.makeText(getContext(), getString(R.string.canceled_op), Toast.LENGTH_SHORT);
             thetoast.setGravity(Gravity.CENTER, 0, 0);
             thetoast.show();
             cancelButton.setVisibility(View.GONE);
@@ -367,7 +279,7 @@ public class FatorizarFragment extends Fragment {
 
     public void displayCancelDialogBox() {
 
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mActivity);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
 
         // set title
         alertDialogBuilder.setTitle(getString(R.string.fatorize_title));
@@ -376,17 +288,11 @@ public class FatorizarFragment extends Fragment {
         alertDialogBuilder
                 .setMessage(R.string.cancel_it)
                 .setCancelable(true)
-                .setPositiveButton(R.string.sim, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        cancel_AsyncTask();
-                        dialog.cancel();
-                    }
+                .setPositiveButton(R.string.sim, (dialog, id) -> {
+                    cancel_AsyncTask();
+                    dialog.cancel();
                 })
-                .setNegativeButton(R.string.nao, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
+                .setNegativeButton(R.string.nao, (dialog, id) -> dialog.cancel());
         AlertDialog alertDialog = alertDialogBuilder.create();        // create alert dialog
         alertDialog.show();                                           // show it
     }
@@ -395,32 +301,22 @@ public class FatorizarFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_fatorizar, container, false);
-        final EditText num_1 = (EditText) view.findViewById(R.id.editNumFact);
+        wditTextNum1 = view.findViewById(R.id.editNumFact);
 
-        cancelButton = (ImageView) view.findViewById(R.id.cancelTask);
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                displayCancelDialogBox();
-            }
-        });
-        button = (Button) view.findViewById(R.id.button_calc_fatores);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                calcfatoresPrimos();
-            }
-        });
+        historyLayout = view.findViewById(R.id.history);
+        cardView1 = view.findViewById(R.id.card_view_1);
+        progressBar = view.findViewById(R.id.progress);
 
-        Button clearTextBtn = (Button) view.findViewById(R.id.btn_clear);
-        clearTextBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                num_1.setText("");
-            }
-        });
 
-        num_1.addTextChangedListener(new TextWatcher() {
+        cancelButton = view.findViewById(R.id.cancelTask);
+        cancelButton.setOnClickListener(v -> displayCancelDialogBox());
+        button = view.findViewById(R.id.button_calc_fatores);
+        button.setOnClickListener(v -> calcfatoresPrimos());
+
+        Button clearTextBtn = view.findViewById(R.id.btn_clear);
+        clearTextBtn.setOnClickListener(v -> wditTextNum1.setText(""));
+
+        wditTextNum1.addTextChangedListener(new TextWatcher() {
             String oldnum1;
 
             @Override
@@ -430,18 +326,17 @@ public class FatorizarFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.toString().equals("")) {
-                    return;
-                }
-                try {
-                    // Tentar converter o string para Long
-                    num1 = parseLong(s.toString());
-                } catch (Exception e) {
-                    num_1.setText(oldnum1);
-                    num_1.setSelection(num_1.getText().length()); //Colocar o cursor no final do texto
-                    Toast thetoast = Toast.makeText(mActivity, getString(R.string.numero_alto), Toast.LENGTH_SHORT);
-                    thetoast.setGravity(Gravity.CENTER, 0, 0);
-                    thetoast.show();
+                if (!TextUtils.isEmpty(s)) {
+                    try {
+                        // Tentar converter o string para Long
+                        num1 = parseLong(s.toString());
+                    } catch (Exception e) {
+                        wditTextNum1.setText(oldnum1);
+                        wditTextNum1.setSelection(wditTextNum1.getText().length()); //Colocar o cursor no final do texto
+                        Toast thetoast = Toast.makeText(getContext(), getString(R.string.numero_alto), Toast.LENGTH_SHORT);
+                        thetoast.setGravity(Gravity.CENTER, 0, 0);
+                        thetoast.show();
+                    }
                 }
             }
 
@@ -455,12 +350,11 @@ public class FatorizarFragment extends Fragment {
 
     private void calcfatoresPrimos() {
         startTime = System.nanoTime();
-        EditText edittext = (EditText) mActivity.findViewById(R.id.editNumFact);
-        String editnumText = edittext.getText().toString();
+        String editnumText = wditTextNum1.getText().toString();
         long num;
 
-        if (editnumText.equals(null) || editnumText.equals("") || editnumText == null) {
-            Toast thetoast = Toast.makeText(mActivity, R.string.insert_integer, Toast.LENGTH_LONG);
+        if (TextUtils.isEmpty(editnumText)) {
+            Toast thetoast = Toast.makeText(getContext(), R.string.insert_integer, Toast.LENGTH_LONG);
             thetoast.setGravity(Gravity.CENTER, 0, 0);
             thetoast.show();
             return;
@@ -469,13 +363,13 @@ public class FatorizarFragment extends Fragment {
             // Tentar converter o string para long
             num = Long.parseLong(editnumText);
         } catch (Exception e) {
-            Toast thetoast = Toast.makeText(mActivity, getString(R.string.numero_alto), Toast.LENGTH_LONG);
+            Toast thetoast = Toast.makeText(getContext(), getString(R.string.numero_alto), Toast.LENGTH_LONG);
             thetoast.setGravity(Gravity.CENTER, 0, 0);
             thetoast.show();
             return;
         }
         if (num == 0L || num == 1L) {
-            Toast thetoast = Toast.makeText(mActivity, getString(R.string.the_number) + " " + num + " " + getString(R.string.has_no_factors), Toast.LENGTH_LONG);
+            Toast thetoast = Toast.makeText(getContext(), getString(R.string.the_number) + " " + num + " " + getString(R.string.has_no_factors), Toast.LENGTH_LONG);
             thetoast.setGravity(Gravity.CENTER, 0, 0);
             thetoast.show();
             return;
@@ -488,7 +382,7 @@ public class FatorizarFragment extends Fragment {
     void createCardViewLayout(Long number, final ViewGroup history, String str_results, SpannableStringBuilder ssb_str_divisores, SpannableStringBuilder ssbFatores, SpannableStringBuilder str_fact_exp, Boolean hasExpoentes) {
 
         //criar novo cardview
-        final CardView cardview = new CardView(mActivity);
+        final CardView cardview = new CardView(getActivity());
         cardview.setLayoutParams(new CardView.LayoutParams(
                 CardView.LayoutParams.MATCH_PARENT,   // width
                 CardView.LayoutParams.WRAP_CONTENT)); // height
@@ -500,17 +394,17 @@ public class FatorizarFragment extends Fragment {
         cardview.setCardElevation((int) (2 * scale + 0.5f));
         cardview.setContentPadding(lr_dip, tb_dip, lr_dip, tb_dip);
         cardview.setUseCompatPadding(true);
-        cardview.setCardBackgroundColor(ContextCompat.getColor(mActivity, R.color.cardsColor));
+        cardview.setCardBackgroundColor(ContextCompat.getColor(getContext(), R.color.cardsColor));
 
         // Add cardview to history layout at the top (index 0)
         history.addView(cardview, 0);
 
-        LinearLayout ll_vertical_root = new LinearLayout(mActivity);
+        LinearLayout ll_vertical_root = new LinearLayout(getContext());
         ll_vertical_root.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         ll_vertical_root.setOrientation(LinearLayout.VERTICAL);
 
         // Criar novo Textview para o resultado da fatorização
-        TextView textView = new TextView(mActivity);
+        TextView textView = new TextView(getContext());
         textView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         textView.setPadding(0, 0, 0, 0);
 
@@ -534,14 +428,14 @@ public class FatorizarFragment extends Fragment {
         String shouldShowExplanation = sharedPrefs.getString("pref_show_explanation", "0");
         // -1 = sempre  0 = quando pedidas   1 = nunca
         if (shouldShowExplanation.equals("-1") || shouldShowExplanation.equals("0")) {
-            ForegroundColorSpan boldColorSpan = new ForegroundColorSpan(ContextCompat.getColor(mActivity, R.color.boldColor));
+            ForegroundColorSpan boldColorSpan = new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.boldColor));
 
-            LinearLayout ll_vertical_expl = new LinearLayout(mActivity);
+            LinearLayout ll_vertical_expl = new LinearLayout(getContext());
             ll_vertical_expl.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
             ll_vertical_expl.setOrientation(LinearLayout.VERTICAL);
             ll_vertical_expl.setTag("ll_vertical_expl");
 
-            TextView textView_expl1 = new TextView(mActivity);
+            TextView textView_expl1 = new TextView(getContext());
             textView_expl1.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
             textView_expl1.setTextSize(TypedValue.COMPLEX_UNIT_SP, CARD_TEXT_SIZE);
             String explain_text_1 = getString(R.string.expl_text_divisores_1);
@@ -551,29 +445,29 @@ public class FatorizarFragment extends Fragment {
             textView_expl1.setTag(R.id.texto, "texto");
             ll_vertical_expl.addView(textView_expl1);
 
-            LinearLayout ll_horizontal = new LinearLayout(mActivity);
+            LinearLayout ll_horizontal = new LinearLayout(getContext());
             ll_horizontal.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
             ll_horizontal.setOrientation(LinearLayout.HORIZONTAL);
             ll_horizontal.setTag("ll_horizontal_expl");
 
-            LinearLayout ll_vertical_results = new LinearLayout(mActivity);
+            LinearLayout ll_vertical_results = new LinearLayout(getContext());
             ll_vertical_results.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
             ll_vertical_results.setOrientation(LinearLayout.VERTICAL);
             ll_vertical_results.setPadding(0, 0, (int) (4 * scale + 0.5f), 0);
 
-            LinearLayout ll_vertical_separador = new LinearLayout(mActivity);
+            LinearLayout ll_vertical_separador = new LinearLayout(getContext());
             ll_vertical_separador.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT));
             ll_vertical_separador.setOrientation(LinearLayout.VERTICAL);
-            ll_vertical_separador.setBackgroundColor(ContextCompat.getColor(mActivity, R.color.separatorLineColor));
+            ll_vertical_separador.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.separatorLineColor));
             int um_dip = (int) (1.2 * scale + 0.5f);
             ll_vertical_separador.setPadding(um_dip, 4, 0, um_dip);
 
-            LinearLayout ll_vertical_divisores = new LinearLayout(mActivity);
+            LinearLayout ll_vertical_divisores = new LinearLayout(getContext());
             ll_vertical_divisores.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
             ll_vertical_divisores.setOrientation(LinearLayout.VERTICAL);
             ll_vertical_divisores.setPadding((int) (4 * scale + 0.5f), 0, (int) (8 * scale + 0.5f), 0);
 
-            TextView textView_results = new TextView(mActivity);
+            TextView textView_results = new TextView(getContext());
             textView_results.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
             textView_results.setTextSize(TypedValue.COMPLEX_UNIT_SP, CARD_TEXT_SIZE);
             textView_results.setGravity(Gravity.RIGHT);
@@ -584,7 +478,7 @@ public class FatorizarFragment extends Fragment {
 
             ll_vertical_results.addView(textView_results);
 
-            TextView textView_divisores = new TextView(mActivity);
+            TextView textView_divisores = new TextView(getContext());
             textView_divisores.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
             textView_divisores.setTextSize(TypedValue.COMPLEX_UNIT_SP, CARD_TEXT_SIZE);
             textView_divisores.setGravity(Gravity.LEFT);
@@ -607,12 +501,12 @@ public class FatorizarFragment extends Fragment {
             final SpannableStringBuilder ssb_show_expl = new SpannableStringBuilder(getString(R.string.explain));
             ssb_show_expl.setSpan(new UnderlineSpan(), 0, ssb_show_expl.length() - 2, SPAN_EXCLUSIVE_EXCLUSIVE);
 
-            final TextView explainLink = new TextView(mActivity);
+            final TextView explainLink = new TextView(getContext());
             explainLink.setLayoutParams(new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,   //largura
                     LinearLayout.LayoutParams.WRAP_CONTENT)); //altura
             explainLink.setTextSize(TypedValue.COMPLEX_UNIT_SP, CARD_TEXT_SIZE);
-            explainLink.setTextColor(ContextCompat.getColor(mActivity, R.color.linkBlue));
+            explainLink.setTextColor(ContextCompat.getColor(getContext(), R.color.linkBlue));
 
             final Boolean[] isExpanded = {false};
 
@@ -647,7 +541,7 @@ public class FatorizarFragment extends Fragment {
             gradient_separator.setText("");
 
             //Linearlayout horizontal com o explainlink e gradiente
-            LinearLayout ll_horizontal_link = new LinearLayout(mActivity);
+            LinearLayout ll_horizontal_link = new LinearLayout(getContext());
             ll_horizontal_link.setOrientation(HORIZONTAL);
             ll_horizontal_link.setLayoutParams(new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
@@ -659,13 +553,13 @@ public class FatorizarFragment extends Fragment {
 
             ll_vertical_expl.addView(ll_horizontal);
 
-            TextView textView_fact_expanded = new TextView(mActivity);
+            TextView textView_fact_expanded = new TextView(getContext());
             textView_fact_expanded.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
             textView_fact_expanded.setTextSize(TypedValue.COMPLEX_UNIT_SP, CARD_TEXT_SIZE);
             textView_fact_expanded.setGravity(Gravity.LEFT);
             String explain_text_2 = getString(R.string.explain_divisores2) + "\n";
             SpannableStringBuilder ssb_explain_2 = new SpannableStringBuilder(explain_text_2);
-            ssb_explain_2.setSpan(new ForegroundColorSpan(ContextCompat.getColor(mActivity, R.color.boldColor)), 0, ssb_explain_2.length(), SPAN_EXCLUSIVE_EXCLUSIVE);
+            ssb_explain_2.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.boldColor)), 0, ssb_explain_2.length(), SPAN_EXCLUSIVE_EXCLUSIVE);
             ssb_explain_2.append(str_fact_exp);
             ssb_explain_2.setSpan(new RelativeSizeSpan(0.9f), ssb_explain_2.length() - str_fact_exp.length(), ssb_explain_2.length(), SPAN_EXCLUSIVE_EXCLUSIVE);
             if (hasExpoentes) {
@@ -691,7 +585,7 @@ public class FatorizarFragment extends Fragment {
         // Create a generic swipe-to-dismiss touch listener.
         cardview.setOnTouchListener(new SwipeToDismissTouchListener(
                 cardview,
-                mActivity,
+                getActivity(),
                 new SwipeToDismissTouchListener.DismissCallbacks() {
                     @Override
                     public boolean canDismiss(Boolean token) {
@@ -708,55 +602,31 @@ public class FatorizarFragment extends Fragment {
     @NonNull
     private TextView getGradientSeparator() {
         //View separator with gradient
-        TextView gradient_separator = new TextView(mActivity);
+        TextView gradient_separator = new TextView(getContext());
         gradient_separator.setTag("gradient_separator");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            gradient_separator.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.bottom_border2));
+            gradient_separator.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.bottom_border2));
         } else {
-            gradient_separator.setBackgroundDrawable(ContextCompat.getDrawable(mActivity, R.drawable.bottom_border2));
+            gradient_separator.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.bottom_border2));
         }
         gradient_separator.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,   //largura
                 LinearLayout.LayoutParams.WRAP_CONTENT)); //altura
         gradient_separator.setGravity(Gravity.RIGHT | Gravity.BOTTOM);
-        gradient_separator.setTextColor(ContextCompat.getColor(mActivity, R.color.lightBlue));
+        gradient_separator.setTextColor(ContextCompat.getColor(getContext(), R.color.lightBlue));
         gradient_separator.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
         return gradient_separator;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
     private void processData(ArrayList<ArrayList<Long>> result, Boolean wasCanceled) {
-            /* resultadosDivisao|fatoresPrimos
-            *                100|2
-            *                 50|2
-            *                 25|5
-            *                  5|5
-            *                  1|
-            *
-            * */
+        /* resultadosDivisao|fatoresPrimos
+         *                100|2
+         *                 50|2
+         *                 25|5
+         *                  5|5
+         *                  1|
+         *
+         * */
 
         ArrayList<Long> resultadosDivisao = result.get(0);
         ArrayList<Long> fatoresPrimos = result.get(1);
@@ -772,10 +642,9 @@ public class FatorizarFragment extends Fragment {
             str_fatores = resultadosDivisao.get(0) + " " + getString(R.string.its_a_prime);
             ssb_fatores = new SpannableStringBuilder(str_fatores);
             ssb_fatores.setSpan(new ForegroundColorSpan(Color.parseColor("#29712d")), 0, ssb_fatores.length(), SPAN_EXCLUSIVE_EXCLUSIVE); //verde
-            CreateCardView.create(history, ssb_fatores, mActivity);
+            CreateCardView.create(historyLayout, ssb_fatores, getActivity());
 
         } else {
-            str_fatores = "";
             Boolean hasExpoentes = false;
             Integer counter = 1;
             Long lastItem = fatoresPrimos.get(0);
@@ -790,9 +659,7 @@ public class FatorizarFragment extends Fragment {
             //Contar os expoentes
             for (int i = 0; i < fatoresPrimos.size(); i++) {
                 Long fatori = fatoresPrimos.get(i);
-                if (lastItem != fatori) {
-                    colorIndex++;
-                }
+                if (lastItem != fatori) colorIndex++;
 
                 String fi = fatori.toString();
                 ssb_fact_expanded.append(fi);
@@ -826,7 +693,7 @@ public class FatorizarFragment extends Fragment {
             final Set<Map.Entry<String, Integer>> mapValues = dataset.entrySet();       // Confusão para sacar o último elemento
             final Map.Entry<String, Integer>[] test = new Map.Entry[mapValues.size()];  // (fator primo)
             mapValues.toArray(test);                                                    //
-            String lastkey = test[0].getKey().toString();                            //
+            String lastkey = test[0].getKey();                            //
 
             Iterator iterator = dataset.entrySet().iterator();
 
@@ -911,28 +778,13 @@ public class FatorizarFragment extends Fragment {
             }
             str_results += String.valueOf(resultadosDivisao.get(resultadosDivisao.size() - 1));
 
-            createCardViewLayout(resultadosDivisao.get(0), history, str_results, ssb_divisores, ssb_fatores, ssb_fact_expanded, hasExpoentes); //ok
+            createCardViewLayout(resultadosDivisao.get(0), historyLayout, str_results, ssb_divisores, ssb_fatores, ssb_fact_expanded, hasExpoentes); //ok
         }
 
         progressBar.setVisibility(View.GONE);
         button.setText(getString(fatorizar_btn));
         button.setClickable(true);
         cancelButton.setVisibility(View.GONE);
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
     }
 
     public class BackGroundOperation extends AsyncTask<Long, Float, ArrayList<ArrayList<Long>>> {
@@ -943,10 +795,7 @@ public class FatorizarFragment extends Fragment {
             button.setText(getString(R.string.working));
             cancelButton.setVisibility(View.VISIBLE);
             hideKeyboard();
-            history = (LinearLayout) mActivity.findViewById(R.id.history);
-            ViewGroup cardView1 = (ViewGroup) mActivity.findViewById(R.id.card_view_1);
             cv_width = cardView1.getWidth();
-            progressBar = (View) mActivity.findViewById(R.id.progress);
             height_dip = (int) (4 * scale + 0.5f);
             progressBar.setLayoutParams(new LinearLayout.LayoutParams(1, height_dip));
             progressBar.setVisibility(View.VISIBLE);

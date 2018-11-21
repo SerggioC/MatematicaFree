@@ -141,13 +141,11 @@
     <string name="primes_in_range">prime numbers in the range.</string>
     <string name="table_between">Table of prime numbers between</string>
     <string name="the_number">Number</string>
-
     <string name="cancel_it">Cancel operation?</string>
     <string name="and">and</string>
     <string name="action_save_image">Save image</string>
     <string name="explain">Show Explanation ▾</string>
     <string name="hide_explain">Hide Explanation ◂</string>
-    <string name="pref_description_title">Application Preferences</string>
     <string name="action_settings">Preferences</string>
     <string name="comuns">common</string>
     <string name="decompor_num">▻Decompose the numbers in</string>
@@ -158,26 +156,9 @@
     <string name="multiply">▻Multiply</string>
     <string name="nao_comuns">not common</string>
     <string name="performance">Performance:</string>
-    <string name="pref_colors_title">Show colors</string>
-    <string name="pref_description_colors">Display distinct colors for easy explanations (PRO version only)</string>
-    <string name="pref_description_explanation">Select when to present explanations of the calculations: Always, when asked or never.</string>
-    <string name="pref_description_performance">Display CPU runtime after calculation (PRO version only)</string>
-    <string name="pref_perform_title">Show performance</string>
-    <string name="pref_title_explanation">Show explanations</string>
-    <string name="title_activity_settings">Preferences</string>
     <string name="to_obtain_mmc">the factors to obtain the Least Common Multiple:</string>
     <string name="uma_vez">just once</string>
     <string name="with_the">with the</string>
-    <string-array name="pref_list_titles">
-        <item>Always show</item>
-        <item>Show when requested</item>
-        <item>Never show</item>
-    </string-array>
-    <string-array name="pref_list_values">
-        <item>-1</item>
-        <item>0</item>
-        <item>1</item>
-    </string-array>
     <string name="cardinal_primos"># of primes:</string>
     <string name="errorsavingimg">Error while saving image. Please Allow the app to save files.</string>
     <string name="expl_text_divisores_1">▻ Divide the number successively by the lowest prime number, so as to obtain an exact division, until you get 1:</string>
@@ -197,6 +178,12 @@
     <string name="nav_primorial">Calculate Primorial n#</string>
     <string name="home_primorial_description">▸ Calculate Primorial of a number n#</string>
     <string name="zeroPrimorial">Numbers > 0</string>
+    <string name="personalized_consent">Personalised Ads consent is</string>
+    <string name="enabled">enabled</string>
+    <string name="disabled">disabled</string>
+    <string name="unknown">unknown</string>
+    <string name="revoked">revoked</string>
+    <string name="playstore_url" translatable="false">market://details?id=com.sergiocruz.MatematicaPro</string>
 
 
     <item name="texto" type="id"/>

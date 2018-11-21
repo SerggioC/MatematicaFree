@@ -40,7 +40,7 @@ import android.widget.Toast;
 import com.sergiocruz.Matematica.R;
 import com.sergiocruz.Matematica.activity.AboutActivity;
 import com.sergiocruz.Matematica.activity.SettingsActivity;
-import com.sergiocruz.Matematica.helper.GetPro;
+import com.sergiocruz.Matematica.helper.GetProLayout;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -105,7 +105,7 @@ public class PrimesTableFragment extends Fragment {
         int id = item.getItemId();
 
         if (id == R.id.action_share_history) {
-            GetPro.getItPopup(mActivity);
+            GetProLayout.getItPopup(mActivity);
         }
 
         if (id == R.id.action_clear_all_history) {

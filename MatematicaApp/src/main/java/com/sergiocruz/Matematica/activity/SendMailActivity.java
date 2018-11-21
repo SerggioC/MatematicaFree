@@ -1,6 +1,5 @@
 package com.sergiocruz.Matematica.activity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,8 +22,7 @@ public class SendMailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_mail);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        WebView webView = (WebView) findViewById(R.id.web_view);
-//        webView.loadUrl("file:///android_res/drawable/mail_smiley.gif");
+        WebView webView = findViewById(R.id.web_view);
         webView.loadUrl("file:///android_asset/mail_smiley.gif");
 
     }
@@ -73,17 +71,11 @@ public class SendMailActivity extends AppCompatActivity {
         alertDialogBuilder
                 .setMessage(R.string.send_it)
                 .setCancelable(true)
-                .setPositiveButton(R.string.sim, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        startActivity(intent);
-                        dialog.cancel();
-                    }
+                .setPositiveButton(R.string.sim, (dialog, id) -> {
+                    startActivity(intent);
+                    dialog.cancel();
                 })
-                .setNegativeButton(R.string.nao, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
+                .setNegativeButton(R.string.nao, (dialog, id) -> dialog.cancel());
         AlertDialog alertDialog = alertDialogBuilder.create();        // create alert dialog
         alertDialog.show();                                           // show it
     }

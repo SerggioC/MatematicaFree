@@ -210,7 +210,7 @@ public class SwipeToDismissTouchListener implements View.OnTouchListener {
             public void onClick(View view) {
                 theCardView.setCardBackgroundColor(ContextCompat.getColor(mActivity, R.color.cardsColor));
 
-                GetPro.getItPopup(mActivity);
+                GetProLayout.getItPopup(mActivity);
 
                 customPopUp.dismiss();
             }

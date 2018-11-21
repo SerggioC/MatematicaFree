@@ -44,7 +44,7 @@ import com.sergiocruz.Matematica.R;
 import com.sergiocruz.Matematica.activity.AboutActivity;
 import com.sergiocruz.Matematica.activity.SettingsActivity;
 import com.sergiocruz.Matematica.helper.CreateCardView;
-import com.sergiocruz.Matematica.helper.GetPro;
+import com.sergiocruz.Matematica.helper.GetProLayout;
 import com.sergiocruz.Matematica.helper.MenuHelper;
 import com.sergiocruz.Matematica.helper.SwipeToDismissTouchListener;
 
@@ -136,7 +136,7 @@ public class PrimorialFragment extends Fragment {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_share_history) {
-            GetPro.getItPopup(mActivity);
+            GetProLayout.getItPopup(mActivity);
         }
         if (id == R.id.action_clear_all_history) {
             MenuHelper.remove_history(mActivity);

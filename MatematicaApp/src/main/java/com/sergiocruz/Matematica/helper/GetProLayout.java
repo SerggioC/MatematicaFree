@@ -1,6 +1,7 @@
 package com.sergiocruz.Matematica.helper;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.widget.LinearLayoutCompat;
@@ -8,7 +9,6 @@ import android.text.SpannableStringBuilder;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.StyleSpan;
 import android.view.Gravity;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -26,16 +26,10 @@ import static android.widget.LinearLayout.HORIZONTAL;
  * Created by Sergio on 07/01/2017 20:01
  ******/
 
-public class GetPro {
+public class GetProLayout {
 
-    public static void getIt(Activity mActivity) {
-        Toast thetoast = Toast.makeText(mActivity, R.string.getPro, Toast.LENGTH_LONG);
-        thetoast.setGravity(Gravity.CENTER, 0, 0);
-        thetoast.show();
-    }
-
-    public static void getItPopup(Activity mActivity) {
-        Toast thetoast = Toast.makeText(mActivity, R.string.getProFeature, Toast.LENGTH_LONG);
+    public static void getItPopup(Context context) {
+        Toast thetoast = Toast.makeText(context, R.string.getProFeature, Toast.LENGTH_LONG);
         thetoast.setGravity(Gravity.CENTER, 0, 0);
         thetoast.show();
     }
@@ -71,13 +65,10 @@ public class GetPro {
 
         ll_horizontal_Pro_ad.addView(pro_icone);
         ll_horizontal_Pro_ad.addView(pro_ad_text);
-        ll_horizontal_Pro_ad.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse("market://details?id=com.sergiocruz.MatematicaPro"));
-                mActivity.startActivity(intent);
-            }
+        ll_horizontal_Pro_ad.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(mActivity.getString(R.string.playstore_url)));
+            mActivity.startActivity(intent);
         });
         ll_horizontal_Pro_ad.setTag(R.id.texto, "texto");
         return ll_horizontal_Pro_ad;

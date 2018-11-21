@@ -1,6 +1,6 @@
 package com.sergiocruz.Matematica.helper;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.text.SpannableString;
 import android.text.style.SuperscriptSpan;
@@ -14,9 +14,6 @@ import com.sergiocruz.Matematica.R;
 
 import java.util.ArrayList;
 
-import static com.sergiocruz.Matematica.R.id.history;
-import static com.sergiocruz.Matematica.fragment.HomeFragment.mActivity;
-
 /*****
  * Project Matematica
  * Package com.sergiocruz.Matematica.helper
@@ -26,7 +23,7 @@ import static com.sergiocruz.Matematica.fragment.HomeFragment.mActivity;
 public class MenuHelper {
 
     private static ArrayList<View> getViewsByTag(ViewGroup root, String tag) {
-        ArrayList<View> views = new ArrayList<View>();
+        ArrayList<View> views = new ArrayList<>();
         final int childCount = root.getChildCount();
         for (int i = 0; i < childCount; i++) {
             final View child = root.getChildAt(i);
@@ -41,18 +38,16 @@ public class MenuHelper {
         return views;
     }
 
-    public static void remove_history(Activity activity) {
-        ViewGroup history = (ViewGroup) activity.findViewById(R.id.history);
-        if ((history).getChildCount() > 0)
-            (history).removeAllViews();
-        Toast thetoast = Toast.makeText(activity, R.string.history_deleted, Toast.LENGTH_SHORT);
-        thetoast.setGravity(Gravity.CENTER, 0, 0);
-        thetoast.show();
+    public static void remove_history(Context context, ViewGroup historyLayout) {
+        if ((historyLayout).getChildCount() > 0)
+            (historyLayout).removeAllViews();
+        Toast theToast = Toast.makeText(context, R.string.history_deleted, Toast.LENGTH_SHORT);
+        theToast.setGravity(Gravity.CENTER, 0, 0);
+        theToast.show();
     }
 
-    public static void share_history(Activity activity) {
-        ViewGroup history_view = (ViewGroup) activity.findViewById(history);
-        ArrayList<View> textViews_withTAG_texto = getViewsByTag(history_view, "texto");
+    public static void share_history(ViewGroup historyLayout) {
+        ArrayList<View> textViews_withTAG_texto = getViewsByTag(historyLayout, "texto");
         if (textViews_withTAG_texto.size() > 0) {
             String text_fromTextViews_final = "";
             for (int i = 0; i < textViews_withTAG_texto.size(); i++) {
@@ -72,13 +67,13 @@ public class MenuHelper {
 
             Intent sendIntent = new Intent();
             sendIntent.setAction(Intent.ACTION_SEND);
-            sendIntent.putExtra(Intent.EXTRA_TEXT, activity.getResources().getString(R.string.app_long_description) +
-                    activity.getResources().getString(R.string.app_version_name) + "\n" + text_fromTextViews_final);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, historyLayout.getContext().getResources().getString(R.string.app_long_description) +
+                    historyLayout.getContext().getResources().getString(R.string.app_version_name) + "\n" + text_fromTextViews_final);
             sendIntent.setType("text/plain");
-            activity.startActivity(Intent.createChooser(sendIntent, mActivity.getResources().getString(R.string.app_name)));
+            historyLayout.getContext().startActivity(Intent.createChooser(sendIntent, historyLayout.getContext().getResources().getString(R.string.app_name)));
 
         } else {
-            Toast thetoast = Toast.makeText(activity, R.string.nothing_toshare, Toast.LENGTH_SHORT);
+            Toast thetoast = Toast.makeText(historyLayout.getContext(), R.string.nothing_toshare, Toast.LENGTH_SHORT);
             thetoast.setGravity(Gravity.CENTER, 0, 0);
             thetoast.show();
         }

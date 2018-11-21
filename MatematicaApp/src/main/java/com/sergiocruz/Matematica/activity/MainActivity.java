@@ -3,7 +3,6 @@ package com.sergiocruz.Matematica.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.Preference;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -12,7 +11,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -28,7 +26,7 @@ import com.sergiocruz.Matematica.fragment.PrimesTableFragment;
 import com.sergiocruz.Matematica.fragment.PrimorialFragment;
 import com.sergiocruz.Matematica.helper.Ads;
 
-public class MainActivity extends AppCompatActivity implements Preference.OnPreferenceChangeListener {
+public class MainActivity extends AppCompatActivity {
 
     // tags used to attach the fragments
     private static final String TAG_HOME = "home";
@@ -97,19 +95,6 @@ public class MainActivity extends AppCompatActivity implements Preference.OnPref
         Ads.showIn(this, adView);
     }
 
-    @Override
-    public boolean onPreferenceChange(Preference preference, Object newValue) {
-
-        return false;
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        //Save the fragment's instance
-        //getSupportFragmentManager().putFragment(outState, "mContent", mContent);
-    }
 
     /***
      * Returns respected fragment that user
@@ -320,38 +305,6 @@ public class MainActivity extends AppCompatActivity implements Preference.OnPref
         }
 
         super.onBackPressed();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-
-        // show menu only when home fragment is selected
-//        if (navItemIndex == 0) {
-//            getMenuInflater().inflate(R.menu.main, menu);
-//        }
-/*
-        // if fragment is fatorizar, load the menu
-        if (navItemIndex == 3 || navItemIndex == 4) {
-            getMenuInflater().inflate(R.menu.menu_main, menu);
-        }*/
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        //int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_buy) {
-//            Toast.makeText(getApplicationContext(), "Comprar versão PRO para remover anúncios", Toast.LENGTH_LONG).show();
-//            return true;
-//        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     public void mmc(View view) {

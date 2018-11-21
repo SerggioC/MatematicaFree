@@ -15,11 +15,11 @@ public class AboutActivity extends AppCompatActivity {
         setContentView(R.layout.activity_about);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        TextView aboutTittle = (TextView) this.findViewById(R.id.aboutTitle);
-        aboutTittle.setText(getString(R.string.app_long_description)+getString(R.string.app_version_name));
+        ((TextView) findViewById(R.id.aboutTitle))
+                .setText(getString(R.string.app_long_description)+getString(R.string.app_version_name));
 
-        TextView versionTV = (TextView) this.findViewById(R.id.version);
-        versionTV.setText(getString(R.string.app_version_description) + " " + getString(R.string.app_version_name) + "\n"
+        ((TextView) findViewById(R.id.version))
+                .setText(getString(R.string.app_version_description) + " " + getString(R.string.app_version_name) + "\n"
                 + getString(R.string.app_version_date));
     }
 

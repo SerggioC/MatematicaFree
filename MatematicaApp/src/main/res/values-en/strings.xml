@@ -161,4 +161,9 @@
     <string name="home_primorial_description">▸ Calculate Primorial of a number n#</string>
     <string name="nav_primorial">Calculate Primorial n#</string>
     <string name="zeroPrimorial">Numbers > 0</string>
+    <string name="personalized_consent">Personalised Ads consent is</string>
+    <string name="enabled">enabled</string>
+    <string name="disabled">disabled</string>
+    <string name="unknown">unknown</string>
+    <string name="revoked">revoked</string>
 </resources>

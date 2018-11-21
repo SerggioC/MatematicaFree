@@ -99,16 +99,16 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         super.onCreate(savedInstanceState);
         setupActionBar();
         addPreferencesFromResource(R.xml.pref_general);
-        bindPreferenceSummaryToValue(findPreference("pref_show_explanation"));
+        bindPreferenceSummaryToValue(findPreference(getString(R.string.show_explanation)));
 
-        Preference prefShowColors = findPreference("pref_show_colors");
+        Preference prefShowColors = findPreference(getString(R.string.show_colors));
         prefShowColors.setEnabled(false);
 
-        Preference prefShowPerformance = findPreference("pref_show_performance");
+        Preference prefShowPerformance = findPreference(getString(R.string.show_performance));
         prefShowPerformance.setEnabled(false);
 
-        final CheckBoxPreference bruteForce = (CheckBoxPreference) findPreference("pref_brute_force_mode");
-        final CheckBoxPreference probabilistic = (CheckBoxPreference) findPreference("pref_probabilistic_mode");
+        final CheckBoxPreference bruteForce = (CheckBoxPreference) findPreference(getString(R.string.brute_force));
+        final CheckBoxPreference probabilistic = (CheckBoxPreference) findPreference(getString(R.string.probabilistic_mode));
 
         bruteForce.setOnPreferenceClickListener(preference -> {
             probabilistic.setChecked(!bruteForce.isChecked());
@@ -121,19 +121,19 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         });
 
 
-        Preference prefRevokeAds = findPreference("pref_revoke_ads");
-        String title = "Personalised Ads consent is";
+        Preference prefRevokeAds = findPreference(getString(R.string.revoke_ads));
+        String title = getString(R.string.personalized_consent);
 
         String consentStatus;
         switch (Ads.getStatus(getApplicationContext())) {
             case PERSONALIZED:
-                consentStatus = "enabled";
+                consentStatus = getString(R.string.enabled);
                 break;
             case NON_PERSONALIZED:
-                consentStatus = "disabled";
+                consentStatus = getString(R.string.disabled);
                 break;
             default:
-                consentStatus = "unknown";
+                consentStatus = getString(R.string.unknown);
                 break;
         }
 
@@ -142,17 +142,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         prefRevokeAds.setOnPreferenceClickListener(preference -> {
             //Revoke Ads consent
             Ads.setStatus(getApplicationContext(), ConsentStatus.UNKNOWN);
-            prefRevokeAds.setSummary(title + " " + "revoked");
-
+            prefRevokeAds.setSummary(title + " " + getString(R.string.revoked));
             onBackPressed();
             return true;
         });
 
     }
-
-
-
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
