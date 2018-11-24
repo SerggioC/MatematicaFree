@@ -44,13 +44,13 @@ import com.sergiocruz.Matematica.activity.AboutActivity;
 import com.sergiocruz.Matematica.activity.SettingsActivity;
 import com.sergiocruz.Matematica.helper.CreateCardView;
 import com.sergiocruz.Matematica.helper.GetProLayout;
-import com.sergiocruz.Matematica.helper.MenuHelper;
 import com.sergiocruz.Matematica.helper.SwipeToDismissTouchListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
 import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
+import static com.sergiocruz.Matematica.helper.MenuHelperKt.removeHistory;
 import static java.lang.Long.parseLong;
 
 
@@ -157,7 +157,7 @@ public class DivisoresFragment extends Fragment {
             GetProLayout.getItPopup(getContext());
         }
         if (id == R.id.action_clear_all_history) {
-            MenuHelper.remove_history(getContext(), historyLayout);
+            removeHistory(historyLayout);
         }
         if (id == R.id.action_help_divisores) {
             String help_divisores = getString(R.string.help_text_divisores);

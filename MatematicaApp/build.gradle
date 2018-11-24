@@ -1,12 +1,13 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 android {
     signingConfigs {
         config {
             storeFile file('C:/Users/sergi/AndroidStudioProjects/keystore.jks')
             keyAlias 'androidappskeystore'
-            keyPassword ''
-            storePassword ''
+            keyPassword 'Bacanal_46!+1!'
+            storePassword 'Bacanal_46!+1!'
         }
     }
     compileSdkVersion 28
@@ -76,7 +77,11 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-core:16.0.5'
     testImplementation 'junit:junit:4.12'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
 
 apply plugin: 'com.google.gms.google-services'
+repositories {
+    mavenCentral()
+}

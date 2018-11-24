@@ -1,8 +1,6 @@
 package com.sergiocruz.Matematica.fragment;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -45,13 +43,13 @@ import com.sergiocruz.Matematica.activity.AboutActivity;
 import com.sergiocruz.Matematica.activity.SettingsActivity;
 import com.sergiocruz.Matematica.helper.CreateCardView;
 import com.sergiocruz.Matematica.helper.GetProLayout;
-import com.sergiocruz.Matematica.helper.MenuHelper;
 import com.sergiocruz.Matematica.helper.SwipeToDismissTouchListener;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
 
 import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
+import static com.sergiocruz.Matematica.helper.MenuHelperKt.removeHistory;
 import static java.lang.Long.parseLong;
 
 /*****
@@ -71,10 +69,11 @@ public class PrimorialFragment extends Fragment {
     Button button;
     ImageView cancelButton;
     long num;
-    Activity mActivity;
     SharedPreferences sharedPrefs;
     long startTime;
     float scale;
+    private LinearLayout historyLayout;
+    private CardView cardView1;
 
     public PrimorialFragment() {
         // Required empty public constructor
@@ -114,100 +113,8 @@ public class PrimorialFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        mActivity = getActivity();
-        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
-        scale = mActivity.getResources().getDisplayMetrics().density;
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        // Inflate the menu; this adds items to the action bar if it is present.
-
-        inflater.inflate(R.menu.menu_main, menu);
-        inflater.inflate(R.menu.menu_sub_main, menu);
-        inflater.inflate(R.menu.menu_help_primorial, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_share_history) {
-            GetProLayout.getItPopup(mActivity);
-        }
-        if (id == R.id.action_clear_all_history) {
-            MenuHelper.remove_history(mActivity);
-        }
-        if (id == R.id.action_help_primorial) {
-            String help_primorial = getString(R.string.help_text_primorial);
-            SpannableStringBuilder ssb = new SpannableStringBuilder(help_primorial);
-            LinearLayout history = (LinearLayout) mActivity.findViewById(R.id.history);
-            CreateCardView.create(history, ssb, mActivity);
-        }
-        if (id == R.id.action_about) {
-            startActivity(new Intent(mActivity, AboutActivity.class));
-        }
-        if (id == R.id.action_settings) {
-            startActivity(new Intent(mActivity, SettingsActivity.class));
-        }
-        if (id == R.id.action_buy_pro) {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("market://details?id=com.sergiocruz.MatematicaPro"));
-            startActivity(intent);
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
-        Display display = mActivity.getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int width = size.x;
-        //int height = size.y;
-        int lr_dip = (int) (4 * scale + 0.5f) * 2;
-        cv_width = width - lr_dip;
-        hideKeyboard();
-    }
-
-    public void hideKeyboard() {
-        try {
-            InputMethodManager imm = (InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(mActivity.getCurrentFocus().getWindowToken(), 0);
-        } catch (Exception e) {
-            Log.e("Sergio>>>", "hideKeyboard error: ", e);
-        }
-    }
-
-    public void displayCancelDialogBox() {
-
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mActivity);
-
-        // set title
-        alertDialogBuilder.setTitle(getString(R.string.calculate_primorial_title));
-
-        // set dialog message
-        alertDialogBuilder
-                .setMessage(R.string.cancel_it)
-                .setCancelable(true)
-                .setPositiveButton(R.string.sim, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        cancel_AsyncTask();
-                        dialog.cancel();
-                    }
-                })
-                .setNegativeButton(R.string.nao, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-        AlertDialog alertDialog = alertDialogBuilder.create();        // create alert dialog
-        alertDialog.show();                                           // show it
+        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        scale = getActivity().getResources().getDisplayMetrics().density;
     }
 
     @Override
@@ -215,31 +122,21 @@ public class PrimorialFragment extends Fragment {
 
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_primorial, container, false);
-        final EditText num_1 = (EditText) view.findViewById(R.id.editNum);
+        final EditText num_1 = view.findViewById(R.id.editNum);
 
-        cancelButton = (ImageView) view.findViewById(R.id.cancelTask);
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                displayCancelDialogBox();
-            }
-        });
+        historyLayout = view.findViewById(R.id.history);
 
-        button = (Button) view.findViewById(R.id.button_calc_primorial);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                calcPrimorial(view);
-            }
-        });
+        cardView1 = view.findViewById(R.id.card_view_1);
+        progressBar = view.findViewById(R.id.progress);
 
-        Button clearTextBtn = (Button) view.findViewById(R.id.btn_clear);
-        clearTextBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                num_1.setText("");
-            }
-        });
+        cancelButton = view.findViewById(R.id.cancelTask);
+        cancelButton.setOnClickListener(v -> displayCancelDialogBox());
+
+        button = view.findViewById(R.id.button_calc_primorial);
+        button.setOnClickListener(v -> calcPrimorial(view));
+
+        Button clearTextBtn = view.findViewById(R.id.btn_clear);
+        clearTextBtn.setOnClickListener(v -> num_1.setText(""));
 
         num_1.addTextChangedListener(new TextWatcher() {
             Long num1;
@@ -261,7 +158,7 @@ public class PrimorialFragment extends Fragment {
                 } catch (Exception e) {
                     num_1.setText(oldnum1);
                     num_1.setSelection(num_1.getText().length()); //Colocar o cursor no final do texto
-                    Toast thetoast = Toast.makeText(mActivity, R.string.numero_alto, Toast.LENGTH_SHORT);
+                    Toast thetoast = Toast.makeText(getContext(), R.string.numero_alto, Toast.LENGTH_SHORT);
                     thetoast.setGravity(Gravity.CENTER, 0, 0);
                     thetoast.show();
                 }
@@ -277,11 +174,95 @@ public class PrimorialFragment extends Fragment {
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        // Inflate the menu; this adds items to the action bar if it is present.
+
+        inflater.inflate(R.menu.menu_main, menu);
+        inflater.inflate(R.menu.menu_sub_main, menu);
+        inflater.inflate(R.menu.menu_help_primorial, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        if (id == R.id.action_share_history) {
+            GetProLayout.getItPopup(getContext());
+        }
+        if (id == R.id.action_clear_all_history) {
+            removeHistory(historyLayout);
+        }
+        if (id == R.id.action_help_primorial) {
+            String help_primorial = getString(R.string.help_text_primorial);
+            SpannableStringBuilder ssb = new SpannableStringBuilder(help_primorial);
+            CreateCardView.create(historyLayout, ssb, getActivity());
+        }
+        if (id == R.id.action_about) {
+            startActivity(new Intent(getContext(), AboutActivity.class));
+        }
+        if (id == R.id.action_settings) {
+            startActivity(new Intent(getContext(), SettingsActivity.class));
+        }
+        if (id == R.id.action_buy_pro) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(getString(R.string.playstore_url)));
+            startActivity(intent);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        //int height = size.y;
+        int lr_dip = (int) (4 * scale + 0.5f) * 2;
+        cv_width = width - lr_dip;
+        hideKeyboard();
+    }
+
+    public void hideKeyboard() {
+        try {
+            InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+        } catch (Exception e) {
+            Log.e("Sergio>>>", "hideKeyboard error: ", e);
+        }
+    }
+
+    public void displayCancelDialogBox() {
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+
+        // set title
+        alertDialogBuilder.setTitle(getString(R.string.calculate_primorial_title));
+
+        // set dialog message
+        alertDialogBuilder
+                .setMessage(R.string.cancel_it)
+                .setCancelable(true)
+                .setPositiveButton(R.string.sim, (dialog, id) -> {
+                    cancel_AsyncTask();
+                    dialog.cancel();
+                })
+                .setNegativeButton(R.string.nao, (dialog, id) -> dialog.cancel());
+        AlertDialog alertDialog = alertDialogBuilder.create();        // create alert dialog
+        alertDialog.show();                                           // show it
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         if (BG_Operation.getStatus() == AsyncTask.Status.RUNNING) {
             BG_Operation.cancel(true);
-            Toast thetoast = Toast.makeText(mActivity, R.string.canceled_op, Toast.LENGTH_SHORT);
+            Toast thetoast = Toast.makeText(getContext(), R.string.canceled_op, Toast.LENGTH_SHORT);
             thetoast.setGravity(Gravity.CENTER, 0, 0);
             thetoast.show();
         }
@@ -290,7 +271,7 @@ public class PrimorialFragment extends Fragment {
     public void cancel_AsyncTask() {
         if (BG_Operation.getStatus() == AsyncTask.Status.RUNNING) {
             BG_Operation.cancel(true);
-            Toast thetoast = Toast.makeText(mActivity, R.string.canceled_op, Toast.LENGTH_SHORT);
+            Toast thetoast = Toast.makeText(getContext(), R.string.canceled_op, Toast.LENGTH_SHORT);
             thetoast.setGravity(Gravity.CENTER, 0, 0);
             thetoast.show();
             cancelButton.setVisibility(View.GONE);
@@ -303,10 +284,10 @@ public class PrimorialFragment extends Fragment {
     public void calcPrimorial(View view) {
         startTime = System.nanoTime();
         hideKeyboard();
-        EditText edittext = (EditText) view.findViewById(R.id.editNum);
-        String editnumText = (String) edittext.getText().toString();
+        EditText edittext = view.findViewById(R.id.editNum);
+        String editnumText = edittext.getText().toString();
         if (editnumText.equals(null) || editnumText.equals("") || editnumText == null) {
-            Toast thetoast = Toast.makeText(mActivity, R.string.add_num_inteiro, Toast.LENGTH_LONG);
+            Toast thetoast = Toast.makeText(getContext(), R.string.add_num_inteiro, Toast.LENGTH_LONG);
             thetoast.setGravity(Gravity.CENTER, 0, 0);
             thetoast.show();
             return;
@@ -316,13 +297,13 @@ public class PrimorialFragment extends Fragment {
             // Tentar converter o string para long
             num = Long.parseLong(editnumText);
             if (num == 0L) {
-                Toast thetoast = Toast.makeText(mActivity, R.string.zeroPrimorial, Toast.LENGTH_LONG);
+                Toast thetoast = Toast.makeText(getContext(), R.string.zeroPrimorial, Toast.LENGTH_LONG);
                 thetoast.setGravity(Gravity.CENTER, 0, 0);
                 thetoast.show();
                 return;
             }
         } catch (Exception e) {
-            Toast thetoast = Toast.makeText(mActivity, R.string.numero_alto, Toast.LENGTH_LONG);
+            Toast thetoast = Toast.makeText(getContext(), R.string.numero_alto, Toast.LENGTH_LONG);
             thetoast.setGravity(Gravity.CENTER, 0, 0);
             thetoast.show();
             return;
@@ -345,7 +326,7 @@ public class PrimorialFragment extends Fragment {
 
     public void createCardView(SpannableStringBuilder ssb) {
         //criar novo cardview
-        final CardView cardview = new CardView(mActivity);
+        final CardView cardview = new CardView(getContext());
         cardview.setLayoutParams(new CardView.LayoutParams(
                 CardView.LayoutParams.MATCH_PARENT,   // width
                 CardView.LayoutParams.WRAP_CONTENT)); // height
@@ -359,15 +340,14 @@ public class PrimorialFragment extends Fragment {
         cardview.setContentPadding(lr_dip, tb_dip, lr_dip, tb_dip);
         cardview.setUseCompatPadding(true);
 
-        int cv_color = ContextCompat.getColor(mActivity, R.color.cardsColor);
+        int cv_color = ContextCompat.getColor(getContext(), R.color.cardsColor);
         cardview.setCardBackgroundColor(cv_color);
 
         // Add cardview to history layout at the top (index 0)
-        final LinearLayout history = (LinearLayout) mActivity.findViewById(R.id.history);
-        history.addView(cardview, 0);
+        historyLayout.addView(cardview, 0);
 
         // criar novo Textview
-        final TextView textView = new TextView(mActivity);
+        final TextView textView = new TextView(getContext());
         textView.setLayoutParams(new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,   //largura
                 ViewGroup.LayoutParams.WRAP_CONTENT)); //altura
@@ -377,14 +357,14 @@ public class PrimorialFragment extends Fragment {
         textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
         textView.setTag(R.id.texto, "texto");
 
-        LinearLayout ll_vertical_root = new LinearLayout(mActivity);
+        LinearLayout ll_vertical_root = new LinearLayout(getContext());
         ll_vertical_root.setLayoutParams(new LinearLayout.LayoutParams(LinearLayoutCompat.LayoutParams.MATCH_PARENT, LinearLayoutCompat.LayoutParams.WRAP_CONTENT));
         ll_vertical_root.setOrientation(LinearLayout.VERTICAL);
 
         // Create a generic swipe-to-dismiss touch listener.
         cardview.setOnTouchListener(new SwipeToDismissTouchListener(
                 cardview,
-                mActivity,
+                getActivity(),
                 new SwipeToDismissTouchListener.DismissCallbacks() {
                     @Override
                     public boolean canDismiss(Boolean token) {
@@ -393,7 +373,7 @@ public class PrimorialFragment extends Fragment {
 
                     @Override
                     public void onDismiss(View view) {
-                        history.removeView(cardview);
+                        historyLayout.removeView(cardview);
                     }
                 }));
 
@@ -413,10 +393,8 @@ public class PrimorialFragment extends Fragment {
             button.setText(R.string.working);
             cancelButton.setVisibility(View.VISIBLE);
             hideKeyboard();
-            CardView cardView1 = (CardView) mActivity.findViewById(R.id.card_view_1);
             cv_width = cardView1.getWidth();
             height_dip = (int) (4 * scale + 0.5f);
-            progressBar = (View) mActivity.findViewById(R.id.progress);
             progressBar.setLayoutParams(new LinearLayout.LayoutParams(10, height_dip));
             progressBar.setVisibility(View.VISIBLE);
         }

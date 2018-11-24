@@ -1,7 +1,6 @@
 package com.sergiocruz.Matematica.fragment;
 
 import android.animation.LayoutTransition;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -45,7 +44,6 @@ import com.sergiocruz.Matematica.activity.AboutActivity;
 import com.sergiocruz.Matematica.activity.SettingsActivity;
 import com.sergiocruz.Matematica.helper.CreateCardView;
 import com.sergiocruz.Matematica.helper.GetProLayout;
-import com.sergiocruz.Matematica.helper.MenuHelper;
 import com.sergiocruz.Matematica.helper.SwipeToDismissTouchListener;
 
 import java.math.BigInteger;
@@ -57,16 +55,19 @@ import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 import static android.widget.LinearLayout.HORIZONTAL;
 import static android.widget.Toast.makeText;
 import static com.sergiocruz.Matematica.fragment.MMCFragment.CARD_TEXT_SIZE;
+import static com.sergiocruz.Matematica.helper.MenuHelperKt.removeHistory;
+import static com.sergiocruz.Matematica.helper.UtilsKt.collapseIt;
+import static com.sergiocruz.Matematica.helper.UtilsKt.expandIt;
 import static java.lang.Long.parseLong;
 
 public class MDCFragment extends Fragment {
 
-    Activity mActivity;
     EditText mdc_num_1, mdc_num_2, mdc_num_3, mdc_num_4, mdc_num_5, mdc_num_6, mdc_num_7, mdc_num_8;
     float scale;
     int height_dip, cv_width;
 
     SharedPreferences sharedPrefs;
+    private ViewGroup historyLayout;
 
 
     public MDCFragment() {
@@ -117,9 +118,8 @@ public class MDCFragment extends Fragment {
         // have a menu in this fragment
         setHasOptionsMenu(true);
 
-        mActivity = getActivity();
-        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
-        scale = mActivity.getResources().getDisplayMetrics().density;
+        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        scale = getResources().getDisplayMetrics().density;
     }
 
 
@@ -141,11 +141,11 @@ public class MDCFragment extends Fragment {
         int id = item.getItemId();
 
         if (id == R.id.action_share_history) {
-            GetProLayout.getItPopup(mActivity);
+            GetProLayout.getItPopup(getContext());
         }
 
         if (id == R.id.action_clear_all_history) {
-            MenuHelper.remove_history(getActivity());
+            removeHistory(historyLayout);
             mdc_num_1.setText("");
             mdc_num_2.setText("");
             mdc_num_3.setText("");
@@ -157,28 +157,27 @@ public class MDCFragment extends Fragment {
         }
 
         if (id == R.id.action_ajuda) {
-            ViewGroup history = getActivity().findViewById(R.id.history);
             String help_divisores = getString(R.string.help_text_mdc);
             SpannableStringBuilder ssb = new SpannableStringBuilder(help_divisores);
-            CreateCardView.create(history, ssb, getActivity());
+            CreateCardView.create(historyLayout, ssb, getActivity());
         }
 
         if (id == R.id.action_about) {
-            startActivity(new Intent(mActivity, AboutActivity.class));
+            startActivity(new Intent(getContext(), AboutActivity.class));
         }
         if (id == R.id.action_settings) {
-            startActivity(new Intent(mActivity, SettingsActivity.class));
+            startActivity(new Intent(getContext(), SettingsActivity.class));
         }
         if (id == R.id.action_buy_pro) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("market://details?id=com.sergiocruz.MatematicaPro"));
+            intent.setData(Uri.parse(getString(R.string.playstore_url)));
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_mdc, container, false);
         mdc_num_1 = view.findViewById(R.id.mdc_num_1);
@@ -193,6 +192,8 @@ public class MDCFragment extends Fragment {
         Button button = view.findViewById(R.id.button_calc_mdc);
         button.setOnClickListener(v -> calc_mdc(view));
 
+        historyLayout = view.findViewById(R.id.history);
+
         view.findViewById(R.id.btn_clear_1).setOnClickListener(v -> mdc_num_1.setText(""));
         view.findViewById(R.id.btn_clear_2).setOnClickListener(v -> mdc_num_2.setText(""));
         view.findViewById(R.id.btn_clear_3).setOnClickListener(v -> mdc_num_3.setText(""));
@@ -202,11 +203,8 @@ public class MDCFragment extends Fragment {
         view.findViewById(R.id.btn_clear_7).setOnClickListener(v -> mdc_num_7.setText(""));
         view.findViewById(R.id.btn_clear_8).setOnClickListener(v -> mdc_num_8.setText(""));
 
-        ImageButton add_mdc = view.findViewById(R.id.button_add_mdc);
-        add_mdc.setOnClickListener(v -> add_mdc(view));
-
-        ImageButton remove_mdc = view.findViewById(R.id.button_remove_mdc);
-        remove_mdc.setOnClickListener(v -> remove_mdc(view));
+        view.findViewById(R.id.button_add_mdc).setOnClickListener(v -> add_mdc(view));
+        view.findViewById(R.id.button_remove_mdc).setOnClickListener(v -> remove_mdc(view));
 
         mdc_num_1.addTextChangedListener(new TextWatcher() {
             Long num1;
@@ -233,9 +231,7 @@ public class MDCFragment extends Fragment {
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
-
-            }
+            public void afterTextChanged(Editable s) {}
         });
 
         mdc_num_2.addTextChangedListener(new TextWatcher() {
@@ -764,7 +760,7 @@ public class MDCFragment extends Fragment {
         }
 
         //criar novo cardview
-        CardView cardview = new CardView(mActivity);
+        CardView cardview = new CardView(getContext());
         cardview.setLayoutParams(new CardView.LayoutParams(
                 CardView.LayoutParams.MATCH_PARENT,   // width
                 CardView.LayoutParams.WRAP_CONTENT)); // height
@@ -783,13 +779,13 @@ public class MDCFragment extends Fragment {
             lt.enableTransitionType(CHANGE_DISAPPEARING);
         }
 
-        int cv_color = ContextCompat.getColor(mActivity, R.color.cardsColor);
+        int cv_color = ContextCompat.getColor(getContext(), R.color.cardsColor);
         cardview.setCardBackgroundColor(cv_color);
 
         // Create a generic swipe-to-dismiss touch listener.
         cardview.setOnTouchListener(new SwipeToDismissTouchListener(
                 cardview,
-                mActivity,
+                getActivity(),
                 new SwipeToDismissTouchListener.DismissCallbacks() {
                     @Override
                     public boolean canDismiss(Boolean token) {
@@ -807,14 +803,14 @@ public class MDCFragment extends Fragment {
         // Add cardview to history layout at the top (index 0)
         history.addView(cardview, 0);
 
-        LinearLayout ll_vertical_root = new LinearLayout(mActivity);
+        LinearLayout ll_vertical_root = new LinearLayout(getContext());
         ll_vertical_root.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT));
         ll_vertical_root.setOrientation(LinearLayout.VERTICAL);
 
         // criar novo Textview
-        final TextView textView = new TextView(mActivity);
+        final TextView textView = new TextView(getContext());
         textView.setLayoutParams(new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,   //largura
                 ViewGroup.LayoutParams.WRAP_CONTENT)); //altura
@@ -827,7 +823,7 @@ public class MDCFragment extends Fragment {
         // add the textview to the cardview
         ll_vertical_root.addView(textView);
 
-        String shouldShowExplanation = sharedPrefs.getString("pref_show_explanation", "0");
+        String shouldShowExplanation = sharedPrefs.getString(getString(R.string.show_explanation), "0");
         // -1 = sempre  0 = quando pedidas   1 = nunca
         if (shouldShowExplanation.equals("-1") || shouldShowExplanation.equals("0")) {
             createExplanations(cardview, ll_vertical_root, shouldShowExplanation);
@@ -839,18 +835,18 @@ public class MDCFragment extends Fragment {
     @NonNull
     private TextView getGradientSeparator() {
         //View separator with gradient
-        TextView gradient_separator = new TextView(mActivity);
+        TextView gradient_separator = new TextView(getContext());
         gradient_separator.setTag("gradient_separator");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            gradient_separator.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.bottom_border2));
+            gradient_separator.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.bottom_border2));
         } else {
-            gradient_separator.setBackgroundDrawable(ContextCompat.getDrawable(mActivity, R.drawable.bottom_border2));
+            gradient_separator.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.bottom_border2));
         }
         gradient_separator.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,   //largura
                 LinearLayout.LayoutParams.WRAP_CONTENT)); //altura
         gradient_separator.setGravity(Gravity.RIGHT | Gravity.BOTTOM);
-        gradient_separator.setTextColor(ContextCompat.getColor(mActivity, R.color.lightBlue));
+        gradient_separator.setTextColor(ContextCompat.getColor(getContext(), R.color.lightBlue));
         gradient_separator.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
         return gradient_separator;
     }
@@ -862,20 +858,19 @@ public class MDCFragment extends Fragment {
         ssb_show_expl.setSpan(new UnderlineSpan(), 0, ssb_show_expl.length() - 2, SPAN_EXCLUSIVE_EXCLUSIVE);
 
         //Linearlayout
-        LinearLayout ll_horizontal = new LinearLayout(mActivity);
+        LinearLayout ll_horizontal = new LinearLayout(getContext());
         ll_horizontal.setOrientation(HORIZONTAL);
         ll_horizontal.setLayoutParams(new LinearLayoutCompat.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT));
 
-        final TextView explainLink = new TextView(mActivity);
+        final TextView explainLink = new TextView(getContext());
         explainLink.setTag("explainLink");
         explainLink.setLayoutParams(new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,   //largura
                 ViewGroup.LayoutParams.WRAP_CONTENT)); //altura
         explainLink.setTextSize(TypedValue.COMPLEX_UNIT_SP, CARD_TEXT_SIZE);
-        explainLink.setTextColor(ContextCompat.getColor(mActivity, R.color.linkBlue));
-        //explainLink.setGravity(Gravity.CENTER_VERTICAL);
+        explainLink.setTextColor(ContextCompat.getColor(getContext(), R.color.linkBlue));
 
         //View separator with gradient
         TextView gradient_separator = getGradientSeparator();
@@ -885,13 +880,11 @@ public class MDCFragment extends Fragment {
             View explView = ((CardView) view.getParent().getParent().getParent()).findViewWithTag("ll_vertical_expl");
             if (!isExpanded[0]) {
                 ((TextView) view).setText(ssb_hide_expl);
-                //explView.setVisibility(View.VISIBLE);
                 expandIt(explView);
                 isExpanded[0] = true;
 
             } else if (isExpanded[0]) {
                 ((TextView) view).setText(ssb_show_expl);
-                //explView.setVisibility(View.GONE);
                 collapseIt(explView);
                 isExpanded[0] = false;
             }
@@ -901,14 +894,14 @@ public class MDCFragment extends Fragment {
         ll_horizontal.addView(gradient_separator);
 
         //LL vertical das explicações
-        LinearLayout ll_vertical_expl = new LinearLayout(mActivity);
+        LinearLayout ll_vertical_expl = new LinearLayout(getContext());
         ll_vertical_expl.setTag("ll_vertical_expl");
         ll_vertical_expl.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT));
         ll_vertical_expl.setOrientation(LinearLayout.VERTICAL);
 
-        LinearLayout ll_horizontal_Pro_ad = GetProLayout.get_ll_horizontal_pro_ad(mActivity);
+        LinearLayout ll_horizontal_Pro_ad = GetProLayout.getLlHorizontalProAd(getContext());
 
         ll_vertical_expl.addView(ll_horizontal_Pro_ad);
         ll_vertical_root.addView(ll_horizontal);
@@ -926,17 +919,6 @@ public class MDCFragment extends Fragment {
 
         cardview.addView(ll_vertical_root);
 
-    }
-
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
     }
 
 }

@@ -46,7 +46,6 @@ import com.sergiocruz.Matematica.R;
 import com.sergiocruz.Matematica.activity.AboutActivity;
 import com.sergiocruz.Matematica.activity.SettingsActivity;
 import com.sergiocruz.Matematica.helper.CreateCardView;
-import com.sergiocruz.Matematica.helper.MenuHelper;
 import com.sergiocruz.Matematica.helper.SwipeToDismissTouchListener;
 
 import java.util.ArrayList;
@@ -61,15 +60,17 @@ import static android.widget.LinearLayout.HORIZONTAL;
 import static com.sergiocruz.Matematica.R.array.f_colors_xml;
 import static com.sergiocruz.Matematica.R.string.fatorizar_btn;
 import static com.sergiocruz.Matematica.fragment.MMCFragment.CARD_TEXT_SIZE;
-import static com.sergiocruz.Matematica.helper.Utils.collapseIt;
-import static com.sergiocruz.Matematica.helper.Utils.expandIt;
+import static com.sergiocruz.Matematica.helper.MenuHelperKt.removeHistory;
+import static com.sergiocruz.Matematica.helper.MenuHelperKt.shareHistory;
+import static com.sergiocruz.Matematica.helper.UtilsKt.collapseIt;
+import static com.sergiocruz.Matematica.helper.UtilsKt.expandIt;
 import static java.lang.Long.parseLong;
 
 public class FatorizarFragment extends Fragment {
     ArrayList<Integer> fColors;
-    /*
+    /**
      *   AsyncTask params <Input datatype, progress update datatype, return datatype>
-     * */
+     **/
     AsyncTask<Long, Float, ArrayList<ArrayList<Long>>> BG_Operation = new BackGroundOperation();
     Button button;
     float scale;
@@ -105,7 +106,7 @@ public class FatorizarFragment extends Fragment {
     @SuppressWarnings("unused")
     private ArrayList<ArrayList<Long>> getTabelaFatoresPrimos(long number) {
 
-        ArrayList<ArrayList<Long>> factoresPrimos = new ArrayList<ArrayList<Long>>();
+        ArrayList<ArrayList<Long>> factoresPrimos = new ArrayList<>();
         ArrayList<Long> results = new ArrayList<>();
         ArrayList<Long> divisores = new ArrayList<>();
 
@@ -134,7 +135,7 @@ public class FatorizarFragment extends Fragment {
     @SuppressWarnings("unused")
     private ArrayList<ArrayList<Long>> getTabelaFatoresPrimos2(long number) {
 
-        ArrayList<ArrayList<Long>> factoresPrimos = new ArrayList<ArrayList<Long>>();
+        ArrayList<ArrayList<Long>> factoresPrimos = new ArrayList<>();
         ArrayList<Long> results = new ArrayList<>();
         ArrayList<Long> divisores = new ArrayList<>();
 
@@ -197,11 +198,11 @@ public class FatorizarFragment extends Fragment {
         int id = item.getItemId();
 
         if (id == R.id.action_share_history) {
-            MenuHelper.share_history(historyLayout);
+            shareHistory(historyLayout);
         }
 
         if (id == R.id.action_clear_all_history) {
-            MenuHelper.remove_history(getContext(), historyLayout);
+            removeHistory(historyLayout);
         }
 
         if (id == R.id.action_ajuda) {
@@ -298,7 +299,7 @@ public class FatorizarFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_fatorizar, container, false);
         wditTextNum1 = view.findViewById(R.id.editNumFact);
@@ -410,9 +411,7 @@ public class FatorizarFragment extends Fragment {
 
         SpannableStringBuilder ssb_fatores_top = new SpannableStringBuilder(ssbFatores);
         ForegroundColorSpan[] spans = ssb_fatores_top.getSpans(0, ssb_fatores_top.length(), ForegroundColorSpan.class);
-        for (int i = 0; i < spans.length; i++) {
-            ssb_fatores_top.removeSpan(spans[i]);
-        }
+        for (ForegroundColorSpan span : spans) ssb_fatores_top.removeSpan(span);
 
         // Adicionar o texto com o resultado da fatorização com expoentes
         String str_num = getString(R.string.factorization_of) + " " + number + " = \n";
@@ -425,7 +424,7 @@ public class FatorizarFragment extends Fragment {
         // add the textview com os fatores multiplicados to the Linear layout vertical root
         ll_vertical_root.addView(textView);
 
-        String shouldShowExplanation = sharedPrefs.getString("pref_show_explanation", "0");
+        String shouldShowExplanation = sharedPrefs.getString(getString(R.string.show_explanation), "0");
         // -1 = sempre  0 = quando pedidas   1 = nunca
         if (shouldShowExplanation.equals("-1") || shouldShowExplanation.equals("0")) {
             ForegroundColorSpan boldColorSpan = new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.boldColor));
@@ -520,20 +519,17 @@ public class FatorizarFragment extends Fragment {
                 isExpanded[0] = false;
             }
 
-            explainLink.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    View explView = ((CardView) view.getParent().getParent().getParent()).findViewWithTag("ll_vertical_expl");
-                    if (!isExpanded[0]) {
-                        ((TextView) view).setText(ssb_hide_expl);
-                        expandIt(explView);
-                        isExpanded[0] = true;
+            explainLink.setOnClickListener(view -> {
+                View explView = ((CardView) view.getParent().getParent().getParent()).findViewWithTag("ll_vertical_expl");
+                if (!isExpanded[0]) {
+                    ((TextView) view).setText(ssb_hide_expl);
+                    expandIt(explView);
+                    isExpanded[0] = true;
 
-                    } else if (isExpanded[0]) {
-                        ((TextView) view).setText(ssb_show_expl);
-                        collapseIt(explView);
-                        isExpanded[0] = false;
-                    }
+                } else if (isExpanded[0]) {
+                    ((TextView) view).setText(ssb_show_expl);
+                    collapseIt(explView);
+                    isExpanded[0] = false;
                 }
             });
             TextView gradient_separator = getGradientSeparator();

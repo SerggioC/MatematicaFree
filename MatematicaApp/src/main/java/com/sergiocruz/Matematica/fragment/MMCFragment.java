@@ -1,7 +1,6 @@
 package com.sergiocruz.Matematica.fragment;
 
 import android.animation.LayoutTransition;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,6 +17,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.text.Editable;
 import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.style.UnderlineSpan;
 import android.util.TypedValue;
@@ -42,7 +42,6 @@ import com.sergiocruz.Matematica.R;
 import com.sergiocruz.Matematica.activity.AboutActivity;
 import com.sergiocruz.Matematica.activity.SettingsActivity;
 import com.sergiocruz.Matematica.helper.GetProLayout;
-import com.sergiocruz.Matematica.helper.MenuHelper;
 import com.sergiocruz.Matematica.helper.SwipeToDismissTouchListener;
 
 import java.math.BigInteger;
@@ -52,19 +51,20 @@ import static android.animation.LayoutTransition.CHANGE_APPEARING;
 import static android.animation.LayoutTransition.CHANGE_DISAPPEARING;
 import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 import static android.widget.LinearLayout.HORIZONTAL;
-import static com.sergiocruz.Matematica.fragment.FatorizarFragment.collapseIt;
-import static com.sergiocruz.Matematica.fragment.FatorizarFragment.expandIt;
 import static com.sergiocruz.Matematica.helper.CreateCardView.create;
+import static com.sergiocruz.Matematica.helper.MenuHelperKt.removeHistory;
+import static com.sergiocruz.Matematica.helper.UtilsKt.collapseIt;
+import static com.sergiocruz.Matematica.helper.UtilsKt.expandIt;
 import static java.lang.Long.parseLong;
 
 public class MMCFragment extends Fragment {
     public static final int CARD_TEXT_SIZE = 15;
 
-    Activity mActivity;
     EditText mmc_num_1, mmc_num_2, mmc_num_3, mmc_num_4, mmc_num_5, mmc_num_6, mmc_num_7, mmc_num_8;
     float scale;
     int height_dip, cv_width;
     SharedPreferences sharedPrefs;
+    private LinearLayout historyLayout;
 
     public MMCFragment() {
         // Required empty public constructor
@@ -86,19 +86,19 @@ public class MMCFragment extends Fragment {
     }
 
     private void showToast() {
-        Toast thetoast = Toast.makeText(mActivity, R.string.numero_alto, Toast.LENGTH_SHORT);
+        Toast thetoast = Toast.makeText(getContext(), R.string.numero_alto, Toast.LENGTH_SHORT);
         thetoast.setGravity(Gravity.CENTER, 0, 0);
         thetoast.show();
     }
 
     private void showToastNum(String field) {
-        Toast thetoast = Toast.makeText(mActivity, getString(R.string.number_in_field) + " " + field + " " + getString(R.string.too_high), Toast.LENGTH_SHORT);
+        Toast thetoast = Toast.makeText(getContext(), getString(R.string.number_in_field) + " " + field + " " + getString(R.string.too_high), Toast.LENGTH_SHORT);
         thetoast.setGravity(Gravity.CENTER, 0, 0);
         thetoast.show();
     }
 
     private void showToastMoreThanZero() {
-        Toast thetoast = Toast.makeText(mActivity, R.string.maiores_qzero, Toast.LENGTH_SHORT);
+        Toast thetoast = Toast.makeText(getContext(), R.string.maiores_qzero, Toast.LENGTH_SHORT);
         thetoast.setGravity(Gravity.CENTER, 0, 0);
         thetoast.show();
     }
@@ -109,10 +109,9 @@ public class MMCFragment extends Fragment {
 
         // have a menu in this fragment
         setHasOptionsMenu(true);
-
-        mActivity = getActivity();
-        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
-        scale = mActivity.getResources().getDisplayMetrics().density;
+        
+        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        scale = getResources().getDisplayMetrics().density;
     }
 
     @Override
@@ -135,7 +134,7 @@ public class MMCFragment extends Fragment {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
-        Display display = mActivity.getWindowManager().getDefaultDisplay();
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
         int width = size.x;  //int height = size.y;
@@ -163,11 +162,11 @@ public class MMCFragment extends Fragment {
         int id = item.getItemId();
 
         if (id == R.id.action_share_history) {
-            GetProLayout.getItPopup(mActivity);
+            GetProLayout.getItPopup(getContext());
         }
 
         if (id == R.id.action_clear_all_history) {
-            MenuHelper.remove_history(mActivity);
+            removeHistory(historyLayout);
             mmc_num_1.setText("");
             mmc_num_2.setText("");
             mmc_num_3.setText("");
@@ -178,20 +177,19 @@ public class MMCFragment extends Fragment {
             mmc_num_8.setText("");
         }
         if (id == R.id.action_ajuda) {
-            LinearLayout history = (LinearLayout) mActivity.findViewById(R.id.history);
             String help_divisores = getString(R.string.help_text_mmc);
             SpannableStringBuilder ssb = new SpannableStringBuilder(help_divisores);
-            create(history, ssb, mActivity);
+            create(historyLayout, ssb, getActivity());
         }
         if (id == R.id.action_about) {
-            startActivity(new Intent(mActivity, AboutActivity.class));
+            startActivity(new Intent(getContext(), AboutActivity.class));
         }
         if (id == R.id.action_settings) {
-            startActivity(new Intent(mActivity, SettingsActivity.class));
+            startActivity(new Intent(getContext(), SettingsActivity.class));
         }
         if (id == R.id.action_buy_pro) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("market://details?id=com.sergiocruz.MatematicaPro"));
+            intent.setData(Uri.parse(getString(R.string.playstore_url)));
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
@@ -202,95 +200,43 @@ public class MMCFragment extends Fragment {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_mmc, container, false);
 
-        mmc_num_1 = (EditText) view.findViewById(R.id.mmc_num_1);
-        mmc_num_2 = (EditText) view.findViewById(R.id.mmc_num_2);
-        mmc_num_3 = (EditText) view.findViewById(R.id.mmc_num_3);
-        mmc_num_4 = (EditText) view.findViewById(R.id.mmc_num_4);
-        mmc_num_5 = (EditText) view.findViewById(R.id.mmc_num_5);
-        mmc_num_6 = (EditText) view.findViewById(R.id.mmc_num_6);
-        mmc_num_7 = (EditText) view.findViewById(R.id.mmc_num_7);
-        mmc_num_8 = (EditText) view.findViewById(R.id.mmc_num_8);
+        mmc_num_1 = view.findViewById(R.id.mmc_num_1);
+        mmc_num_2 = view.findViewById(R.id.mmc_num_2);
+        mmc_num_3 = view.findViewById(R.id.mmc_num_3);
+        mmc_num_4 = view.findViewById(R.id.mmc_num_4);
+        mmc_num_5 = view.findViewById(R.id.mmc_num_5);
+        mmc_num_6 = view.findViewById(R.id.mmc_num_6);
+        mmc_num_7 = view.findViewById(R.id.mmc_num_7);
+        mmc_num_8 = view.findViewById(R.id.mmc_num_8);
 
-        Button button = (Button) view.findViewById(R.id.button_calc_mmc);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                calc_mmc();
-            }
-        });
+        historyLayout = view.findViewById(R.id.history);
 
-        Button clearTextBtn_1 = (Button) view.findViewById(R.id.btn_clear_1);
-        clearTextBtn_1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mmc_num_1.setText("");
-            }
-        });
-        Button clearTextBtn_2 = (Button) view.findViewById(R.id.btn_clear_2);
-        clearTextBtn_2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mmc_num_2.setText("");
-            }
-        });
-        Button clearTextBtn_3 = (Button) view.findViewById(R.id.btn_clear_3);
-        clearTextBtn_3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mmc_num_3.setText("");
-            }
-        });
-        Button clearTextBtn_4 = (Button) view.findViewById(R.id.btn_clear_4);
-        clearTextBtn_4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mmc_num_4.setText("");
-            }
-        });
-        Button clearTextBtn_5 = (Button) view.findViewById(R.id.btn_clear_5);
-        clearTextBtn_5.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mmc_num_5.setText("");
-            }
-        });
-        Button clearTextBtn_6 = (Button) view.findViewById(R.id.btn_clear_6);
-        clearTextBtn_6.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mmc_num_6.setText("");
-            }
-        });
-        Button clearTextBtn_7 = (Button) view.findViewById(R.id.btn_clear_7);
-        clearTextBtn_7.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mmc_num_7.setText("");
-            }
-        });
-        Button clearTextBtn_8 = (Button) view.findViewById(R.id.btn_clear_8);
-        clearTextBtn_8.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mmc_num_8.setText("");
-            }
-        });
 
-        ImageButton add_mmc = (ImageButton) view.findViewById(R.id.button_add_mmc);
-        add_mmc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                add_mmc(view);
-            }
-        });
+        Button button = view.findViewById(R.id.button_calc_mmc);
+        button.setOnClickListener(v -> calc_mmc());
 
-        ImageButton remove_mmc = (ImageButton) view.findViewById(R.id.button_remove_mmc);
-        remove_mmc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                remove_mmc(view);
-            }
-        });
+        Button clearTextBtn_1 = view.findViewById(R.id.btn_clear_1);
+        clearTextBtn_1.setOnClickListener(v -> mmc_num_1.setText(""));
+        Button clearTextBtn_2 = view.findViewById(R.id.btn_clear_2);
+        clearTextBtn_2.setOnClickListener(v -> mmc_num_2.setText(""));
+        Button clearTextBtn_3 = view.findViewById(R.id.btn_clear_3);
+        clearTextBtn_3.setOnClickListener(v -> mmc_num_3.setText(""));
+        Button clearTextBtn_4 = view.findViewById(R.id.btn_clear_4);
+        clearTextBtn_4.setOnClickListener(v -> mmc_num_4.setText(""));
+        Button clearTextBtn_5 = view.findViewById(R.id.btn_clear_5);
+        clearTextBtn_5.setOnClickListener(v -> mmc_num_5.setText(""));
+        Button clearTextBtn_6 = view.findViewById(R.id.btn_clear_6);
+        clearTextBtn_6.setOnClickListener(v -> mmc_num_6.setText(""));
+        Button clearTextBtn_7 = view.findViewById(R.id.btn_clear_7);
+        clearTextBtn_7.setOnClickListener(v -> mmc_num_7.setText(""));
+        Button clearTextBtn_8 = view.findViewById(R.id.btn_clear_8);
+        clearTextBtn_8.setOnClickListener(v -> mmc_num_8.setText(""));
+
+        ImageButton add_mmc = view.findViewById(R.id.button_add_mmc);
+        add_mmc.setOnClickListener(v -> add_mmc(view));
+
+        ImageButton remove_mmc = view.findViewById(R.id.button_remove_mmc);
+        remove_mmc.setOnClickListener(v -> remove_mmc(view));
 
         mmc_num_1.addTextChangedListener(new TextWatcher() {
             Long num1;
@@ -303,16 +249,15 @@ public class MMCFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.toString().equals("")) {
-                    return;
-                }
-                try {
-                    // Tentar converter o string para Long
-                    num1 = parseLong(s.toString());
-                } catch (Exception e) {
-                    mmc_num_1.setText(oldnum1);
-                    mmc_num_1.setSelection(mmc_num_1.getText().length()); //Colocar o cursor no final do texto
-                    showToast();
+                if (!TextUtils.isEmpty(s)) {
+                    try {
+                        // Tentar converter o string para Long
+                        num1 = parseLong(s.toString());
+                    } catch (Exception e) {
+                        mmc_num_1.setText(oldnum1);
+                        mmc_num_1.setSelection(mmc_num_1.getText().length()); //Colocar o cursor no final do texto
+                        showToast();
+                    }
                 }
             }
 
@@ -334,16 +279,15 @@ public class MMCFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.toString().equals("")) {
-                    return;
-                }
-                try {
-                    // Tentar converter o string para Long
-                    num2 = parseLong(s.toString());
-                } catch (Exception e) {
-                    mmc_num_2.setText(oldnum2);
-                    mmc_num_2.setSelection(mmc_num_2.getText().length());
-                    showToast();
+                if (!TextUtils.isEmpty(s)) {
+                    try {
+                        // Tentar converter o string para Long
+                        num2 = parseLong(s.toString());
+                    } catch (Exception e) {
+                        mmc_num_2.setText(oldnum2);
+                        mmc_num_2.setSelection(mmc_num_2.getText().length());
+                        showToast();
+                    }
                 }
             }
 
@@ -363,17 +307,16 @@ public class MMCFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.toString().equals("")) {
-                    return;
-                }
-                try {
-                    // Tentar converter o string para Long
-                    num3 = parseLong(s.toString());
+                if (!TextUtils.isEmpty(s)) {
+                    try {
+                        // Tentar converter o string para Long
+                        num3 = parseLong(s.toString());
 
-                } catch (Exception e) {
-                    mmc_num_3.setText(oldnum3);
-                    mmc_num_3.setSelection(mmc_num_3.getText().length());
-                    showToast();
+                    } catch (Exception e) {
+                        mmc_num_3.setText(oldnum3);
+                        mmc_num_3.setSelection(mmc_num_3.getText().length());
+                        showToast();
+                    }
                 }
             }
 
@@ -394,17 +337,16 @@ public class MMCFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.toString().equals("")) {
-                    return;
-                }
-                try {
-                    // Tentar converter o string para Long
-                    num4 = parseLong(s.toString());
+                if (!TextUtils.isEmpty(s)) {
+                    try {
+                        // Tentar converter o string para Long
+                        num4 = parseLong(s.toString());
 
-                } catch (Exception e) {
-                    mmc_num_4.setText(oldnum4);
-                    mmc_num_4.setSelection(mmc_num_4.getText().length());
-                    showToast();
+                    } catch (Exception e) {
+                        mmc_num_4.setText(oldnum4);
+                        mmc_num_4.setSelection(mmc_num_4.getText().length());
+                        showToast();
+                    }
                 }
             }
 
@@ -425,17 +367,16 @@ public class MMCFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.toString().equals("")) {
-                    return;
-                }
-                try {
-                    // Tentar converter o string para Long
-                    num5 = parseLong(s.toString());
+                if (!TextUtils.isEmpty(s)) {
+                    try {
+                        // Tentar converter o string para Long
+                        num5 = parseLong(s.toString());
 
-                } catch (Exception e) {
-                    mmc_num_5.setText(oldnum5);
-                    mmc_num_5.setSelection(mmc_num_5.getText().length());
-                    showToast();
+                    } catch (Exception e) {
+                        mmc_num_5.setText(oldnum5);
+                        mmc_num_5.setSelection(mmc_num_5.getText().length());
+                        showToast();
+                    }
                 }
             }
 
@@ -455,16 +396,15 @@ public class MMCFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.toString().equals("")) {
-                    return;
-                }
-                try {
-                    // Tentar converter o string para Long
-                    num6 = parseLong(s.toString());
-                } catch (Exception e) {
-                    mmc_num_6.setText(oldnum6);
-                    mmc_num_6.setSelection(mmc_num_6.getText().length());
-                    showToast();
+                if (!TextUtils.isEmpty(s)) {
+                    try {
+                        // Tentar converter o string para Long
+                        num6 = parseLong(s.toString());
+                    } catch (Exception e) {
+                        mmc_num_6.setText(oldnum6);
+                        mmc_num_6.setSelection(mmc_num_6.getText().length());
+                        showToast();
+                    }
                 }
             }
 
@@ -484,16 +424,15 @@ public class MMCFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.toString().equals("")) {
-                    return;
-                }
-                try {
-                    // Tentar converter o string para Long
-                    num7 = parseLong(s.toString());
-                } catch (Exception e) {
-                    mmc_num_7.setText(oldnum7);
-                    mmc_num_7.setSelection(mmc_num_7.getText().length());
-                    showToast();
+                if (!TextUtils.isEmpty(s)) {
+                    try {
+                        // Tentar converter o string para Long
+                        num7 = parseLong(s.toString());
+                    } catch (Exception e) {
+                        mmc_num_7.setText(oldnum7);
+                        mmc_num_7.setSelection(mmc_num_7.getText().length());
+                        showToast();
+                    }
                 }
             }
 
@@ -513,16 +452,15 @@ public class MMCFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.toString().equals("")) {
-                    return;
-                }
-                try {
-                    // Tentar converter o string para Long
-                    num8 = parseLong(s.toString());
-                } catch (Exception e) {
-                    mmc_num_8.setText(oldnum8);
-                    mmc_num_8.setSelection(mmc_num_8.getText().length());
-                    showToast();
+                if (!TextUtils.isEmpty(s)) {
+                    try {
+                        // Tentar converter o string para Long
+                        num8 = parseLong(s.toString());
+                    } catch (Exception e) {
+                        mmc_num_8.setText(oldnum8);
+                        mmc_num_8.setSelection(mmc_num_8.getText().length());
+                        showToast();
+                    }
                 }
             }
 
@@ -536,17 +474,17 @@ public class MMCFragment extends Fragment {
 
     public void add_mmc(View view) {
 
-        LinearLayout ll_34 = (LinearLayout) view.findViewById(R.id.linear_layout_34);
-        LinearLayout ll_56 = (LinearLayout) view.findViewById(R.id.linear_layout_56);
-        LinearLayout ll_78 = (LinearLayout) view.findViewById(R.id.linear_layout_78);
-        FrameLayout f_3 = (FrameLayout) view.findViewById(R.id.frame_3);
-        FrameLayout f_4 = (FrameLayout) view.findViewById(R.id.frame_4);
-        FrameLayout f_5 = (FrameLayout) view.findViewById(R.id.frame_5);
-        FrameLayout f_6 = (FrameLayout) view.findViewById(R.id.frame_6);
-        FrameLayout f_7 = (FrameLayout) view.findViewById(R.id.frame_7);
-        FrameLayout f_8 = (FrameLayout) view.findViewById(R.id.frame_8);
-        ImageButton add_one = (ImageButton) view.findViewById(R.id.button_add_mmc);
-        ImageButton less_one = (ImageButton) view.findViewById(R.id.button_remove_mmc);
+        LinearLayout ll_34 = view.findViewById(R.id.linear_layout_34);
+        LinearLayout ll_56 = view.findViewById(R.id.linear_layout_56);
+        LinearLayout ll_78 = view.findViewById(R.id.linear_layout_78);
+        FrameLayout f_3 = view.findViewById(R.id.frame_3);
+        FrameLayout f_4 = view.findViewById(R.id.frame_4);
+        FrameLayout f_5 = view.findViewById(R.id.frame_5);
+        FrameLayout f_6 = view.findViewById(R.id.frame_6);
+        FrameLayout f_7 = view.findViewById(R.id.frame_7);
+        FrameLayout f_8 = view.findViewById(R.id.frame_8);
+        ImageButton add_one = view.findViewById(R.id.button_add_mmc);
+        ImageButton less_one = view.findViewById(R.id.button_remove_mmc);
 
         boolean ll_34_visibe = ll_34.getVisibility() == View.VISIBLE;
         boolean f3_visible = f_3.getVisibility() == View.VISIBLE;
@@ -603,19 +541,19 @@ public class MMCFragment extends Fragment {
 
     public void remove_mmc(View view) {
 
-        LinearLayout ll_34 = (LinearLayout) view.findViewById(R.id.linear_layout_34);
-        LinearLayout ll_56 = (LinearLayout) view.findViewById(R.id.linear_layout_56);
-        LinearLayout ll_78 = (LinearLayout) view.findViewById(R.id.linear_layout_78);
+        LinearLayout ll_34 = view.findViewById(R.id.linear_layout_34);
+        LinearLayout ll_56 = view.findViewById(R.id.linear_layout_56);
+        LinearLayout ll_78 = view.findViewById(R.id.linear_layout_78);
 
-        FrameLayout f_3 = (FrameLayout) view.findViewById(R.id.frame_3);
-        FrameLayout f_4 = (FrameLayout) view.findViewById(R.id.frame_4);
-        FrameLayout f_5 = (FrameLayout) view.findViewById(R.id.frame_5);
-        FrameLayout f_6 = (FrameLayout) view.findViewById(R.id.frame_6);
-        FrameLayout f_7 = (FrameLayout) view.findViewById(R.id.frame_7);
-        FrameLayout f_8 = (FrameLayout) view.findViewById(R.id.frame_8);
+        FrameLayout f_3 = view.findViewById(R.id.frame_3);
+        FrameLayout f_4 = view.findViewById(R.id.frame_4);
+        FrameLayout f_5 = view.findViewById(R.id.frame_5);
+        FrameLayout f_6 = view.findViewById(R.id.frame_6);
+        FrameLayout f_7 = view.findViewById(R.id.frame_7);
+        FrameLayout f_8 = view.findViewById(R.id.frame_8);
 
-        ImageButton add_one = (ImageButton) view.findViewById(R.id.button_add_mmc);
-        ImageButton less_one = (ImageButton) view.findViewById(R.id.button_remove_mmc);
+        ImageButton add_one = view.findViewById(R.id.button_add_mmc);
+        ImageButton less_one = view.findViewById(R.id.button_remove_mmc);
 
         boolean ll_34_visibe = ll_34.getVisibility() == View.VISIBLE;
         boolean f3_visible = f_3.getVisibility() == View.VISIBLE;
@@ -677,8 +615,8 @@ public class MMCFragment extends Fragment {
 
     public void hideKeyboard() {
         //Hide the keyboard
-        InputMethodManager imm = (InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(mActivity.getCurrentFocus().getWindowToken(), 0);
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
     }
 
     private void calc_mmc() {
@@ -698,7 +636,7 @@ public class MMCFragment extends Fragment {
         ArrayList<BigInteger> numbers = new ArrayList<BigInteger>();
         ArrayList<Long> long_numbers = new ArrayList<Long>();
 
-        if (!str_num1.equals("")) {
+        if (!TextUtils.isEmpty(str_num1)) {
             try {
                 // Tentar converter o string para Long
                 num1 = parseLong(str_num1);
@@ -715,7 +653,7 @@ public class MMCFragment extends Fragment {
                 return;
             }
         }
-        if (!str_num2.equals("")) {
+        if (!TextUtils.isEmpty(str_num2)) {
             try {
                 // Tentar converter o string para Long
                 num2 = parseLong(str_num2);
@@ -732,7 +670,7 @@ public class MMCFragment extends Fragment {
                 return;
             }
         }
-        if (!str_num3.equals("")) {
+        if (!TextUtils.isEmpty(str_num3)) {
             try {
                 // Tentar converter o string para Long
                 num3 = parseLong(str_num3);
@@ -749,7 +687,7 @@ public class MMCFragment extends Fragment {
                 return;
             }
         }
-        if (!str_num4.equals("")) {
+        if (!TextUtils.isEmpty(str_num4)) {
             try {
                 // Tentar converter o string para Long
                 num4 = parseLong(str_num4);
@@ -766,7 +704,7 @@ public class MMCFragment extends Fragment {
                 return;
             }
         }
-        if (!str_num5.equals("")) {
+        if (!TextUtils.isEmpty(str_num5)) {
             try {
                 // Tentar converter o string para Long
                 num5 = parseLong(str_num5);
@@ -783,7 +721,7 @@ public class MMCFragment extends Fragment {
                 return;
             }
         }
-        if (!str_num6.equals("")) {
+        if (!TextUtils.isEmpty(str_num6)) {
             try {
                 // Tentar converter o string para Long
                 num6 = parseLong(str_num6);
@@ -801,7 +739,7 @@ public class MMCFragment extends Fragment {
             }
         }
 
-        if (!str_num7.equals("")) {
+        if (!TextUtils.isEmpty(str_num7)) {
             try {
                 // Tentar converter o string para Long
                 num7 = parseLong(str_num7);
@@ -819,7 +757,7 @@ public class MMCFragment extends Fragment {
             }
         }
 
-        if (!str_num8.equals("")) {
+        if (!TextUtils.isEmpty(str_num8)) {
             try {
                 // Tentar converter o string para Long
                 num8 = parseLong(str_num8);
@@ -837,7 +775,7 @@ public class MMCFragment extends Fragment {
             }
         }
         if (numbers.size() < 2) {
-            Toast thetoast = Toast.makeText(mActivity, R.string.add_number_pair, Toast.LENGTH_SHORT);
+            Toast thetoast = Toast.makeText(getContext(), R.string.add_number_pair, Toast.LENGTH_SHORT);
             thetoast.setGravity(Gravity.CENTER, 0, 0);
             thetoast.show();
             return;
@@ -857,7 +795,7 @@ public class MMCFragment extends Fragment {
         mmc_string += result_mmc;
 
         //criar novo cardview
-        CardView cardview = new CardView(mActivity);
+        CardView cardview = new CardView(getContext());
         cardview.setLayoutParams(new CardView.LayoutParams(
                 CardView.LayoutParams.MATCH_PARENT,   // width
                 CardView.LayoutParams.WRAP_CONTENT)); // height
@@ -877,13 +815,13 @@ public class MMCFragment extends Fragment {
             cardview.setLayoutTransition(lt);
         }
 
-        int cv_color = ContextCompat.getColor(mActivity, R.color.cardsColor);
+        int cv_color = ContextCompat.getColor(getContext(), R.color.cardsColor);
         cardview.setCardBackgroundColor(cv_color);
 
         // Create a generic swipe-to-dismiss touch listener.
         cardview.setOnTouchListener(new SwipeToDismissTouchListener(
                 cardview,
-                mActivity,
+                getActivity(),
                 new SwipeToDismissTouchListener.DismissCallbacks() {
                     @Override
                     public boolean canDismiss(Boolean token) {
@@ -892,23 +830,23 @@ public class MMCFragment extends Fragment {
 
                     @Override
                     public void onDismiss(View view) {
-                        //history.removeView(cardview);
+                        //historyLayout.removeView(cardview);
                     }
                 }));
 
 
-        LinearLayout history = (LinearLayout) mActivity.findViewById(R.id.history);
-        // Add cardview to history layout at the top (index 0)
-        history.addView(cardview, 0);
+        
+        // Add cardview to historyLayout layout at the top (index 0)
+        historyLayout.addView(cardview, 0);
 
-        LinearLayout ll_vertical_root = new LinearLayout(mActivity);
+        LinearLayout ll_vertical_root = new LinearLayout(getContext());
         ll_vertical_root.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT));
         ll_vertical_root.setOrientation(LinearLayout.VERTICAL);
 
         // criar novo Textview
-        final TextView textView = new TextView(mActivity);
+        final TextView textView = new TextView(getContext());
         textView.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,   //largura
                 LinearLayout.LayoutParams.WRAP_CONTENT)); //altura
@@ -921,7 +859,7 @@ public class MMCFragment extends Fragment {
         // add the textview to the cardview
         ll_vertical_root.addView(textView);
 
-        String shouldShowExplanation = sharedPrefs.getString("pref_show_explanation", "0");
+        String shouldShowExplanation = sharedPrefs.getString(getString(R.string.show_explanation), "0");
         // -1 = sempre  0 = quando pedidas   1 = nunca
         if (shouldShowExplanation.equals("-1") || shouldShowExplanation.equals("0")) {
             createExplanations(cardview, ll_vertical_root, shouldShowExplanation);
@@ -933,18 +871,18 @@ public class MMCFragment extends Fragment {
     @NonNull
     private TextView getGradientSeparator() {
         //View separator with gradient
-        TextView gradient_separator = new TextView(mActivity);
+        TextView gradient_separator = new TextView(getContext());
         gradient_separator.setTag("gradient_separator");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            gradient_separator.setBackground(ContextCompat.getDrawable(mActivity, R.drawable.bottom_border2));
+            gradient_separator.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.bottom_border2));
         } else {
-            gradient_separator.setBackgroundDrawable(ContextCompat.getDrawable(mActivity, R.drawable.bottom_border2));
+            gradient_separator.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.bottom_border2));
         }
         gradient_separator.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,   //largura
                 LinearLayout.LayoutParams.WRAP_CONTENT)); //altura
         gradient_separator.setGravity(Gravity.RIGHT | Gravity.BOTTOM);
-        gradient_separator.setTextColor(ContextCompat.getColor(mActivity, R.color.lightBlue));
+        gradient_separator.setTextColor(ContextCompat.getColor(getContext(), R.color.lightBlue));
         gradient_separator.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
         return gradient_separator;
     }
@@ -957,18 +895,18 @@ public class MMCFragment extends Fragment {
         ssb_show_expl.setSpan(new UnderlineSpan(), 0, ssb_show_expl.length() - 2, SPAN_EXCLUSIVE_EXCLUSIVE);
 
         //Linearlayout horizontal com o explainlink e gradiente
-        LinearLayout ll_horizontal = new LinearLayout(mActivity);
+        LinearLayout ll_horizontal = new LinearLayout(getContext());
         ll_horizontal.setOrientation(HORIZONTAL);
         ll_horizontal.setLayoutParams(new LinearLayoutCompat.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT));
-        final TextView explainLink = new TextView(mActivity);
+        final TextView explainLink = new TextView(getContext());
         explainLink.setTag("explainLink");
         explainLink.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,   //largura
                 LinearLayout.LayoutParams.WRAP_CONTENT)); //altura
         explainLink.setTextSize(TypedValue.COMPLEX_UNIT_SP, CARD_TEXT_SIZE);
-        explainLink.setTextColor(ContextCompat.getColor(mActivity, R.color.linkBlue));
+        explainLink.setTextColor(ContextCompat.getColor(getContext(), R.color.linkBlue));
         explainLink.setGravity(Gravity.CENTER_VERTICAL);
 
         //View separator with gradient
@@ -977,22 +915,17 @@ public class MMCFragment extends Fragment {
         ll_horizontal.setGravity(Gravity.CENTER_VERTICAL);
 
         final Boolean[] isExpanded = {false};
-        explainLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                View explView = ((CardView) view.getParent().getParent().getParent()).findViewWithTag("ll_vertical_expl");
-                if (!isExpanded[0]) {
-                    ((TextView) view).setText(ssb_hide_expl);
-                    //explView.setVisibility(View.VISIBLE);
-                    expandIt(explView);
-                    isExpanded[0] = true;
+        explainLink.setOnClickListener(view -> {
+            View explView = ((CardView) view.getParent().getParent().getParent()).findViewWithTag("ll_vertical_expl");
+            if (!isExpanded[0]) {
+                ((TextView) view).setText(ssb_hide_expl);
+                expandIt(explView);
+                isExpanded[0] = true;
 
-                } else if (isExpanded[0]) {
-                    ((TextView) view).setText(ssb_show_expl);
-                    //explView.setVisibility(View.GONE);
-                    collapseIt(explView);
-                    isExpanded[0] = false;
-                }
+            } else if (isExpanded[0]) {
+                ((TextView) view).setText(ssb_show_expl);
+                collapseIt(explView);
+                isExpanded[0] = false;
             }
         });
 
@@ -1000,7 +933,7 @@ public class MMCFragment extends Fragment {
         ll_horizontal.addView(gradient_separator);
 
         //LL vertical das explicações
-        LinearLayout ll_vertical_expl = new LinearLayout(mActivity);
+        LinearLayout ll_vertical_expl = new LinearLayout(getContext());
         ll_vertical_expl.setTag("ll_vertical_expl");
         ll_vertical_expl.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -1014,7 +947,7 @@ public class MMCFragment extends Fragment {
             ll_vertical_expl.setLayoutTransition(lt);
         }
 
-        LinearLayout ll_horizontal_Pro_ad = GetProLayout.get_ll_horizontal_pro_ad(mActivity);
+        LinearLayout ll_horizontal_Pro_ad = GetProLayout.getLlHorizontalProAd(getActivity());
 
         ll_vertical_expl.addView(ll_horizontal_Pro_ad);
         ll_vertical_root.addView(ll_horizontal);
@@ -1030,9 +963,7 @@ public class MMCFragment extends Fragment {
             isExpanded[0] = false;
         }
         cardview.addView(ll_vertical_root);
-
     }
-
 
     @Override
     public void onAttach(Context context) {
