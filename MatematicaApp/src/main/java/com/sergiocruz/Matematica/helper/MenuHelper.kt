@@ -48,7 +48,7 @@ fun shareHistory(historyLayout: ViewGroup) {
                 val ss = SpannableString((textViewsWithTAGTexto[i] as TextView).text)
                 val spans = ss.getSpans(0, (textViewsWithTAGTexto[i] as TextView).text.length, SuperscriptSpan::class.java)
                 for ((corr, span) in spans.withIndex()) {
-                    val start = ss.getSpanStart(span) + corr
+                    val start = ss.getSpanStart(span).plus(corr)
                     text = text.substring(0, start) + "^" + text.substring(start)
                 }
                 textFinal += text
@@ -57,19 +57,18 @@ fun shareHistory(historyLayout: ViewGroup) {
 
         val sendIntent = Intent()
         sendIntent.action = Intent.ACTION_SEND
-        sendIntent.putExtra(Intent.EXTRA_TEXT, historyLayout.context.resources.getString(R.string.app_long_description) +
-                historyLayout.context.resources.getString(R.string.app_version_name) + "\n" + textFinal)
+        sendIntent.putExtra(Intent.EXTRA_TEXT, "${historyLayout.context.resources.getString(R.string.app_long_description)}${historyLayout.context.resources.getString(R.string.app_version_name)}\n$textFinal")
         sendIntent.type = "text/plain"
         historyLayout.context.startActivity(Intent.createChooser(sendIntent, historyLayout.context.resources.getString(R.string.app_name)))
 
     } else {
-        val thetoast = Toast.makeText(historyLayout.context, R.string.nothing_toshare, Toast.LENGTH_SHORT)
-        thetoast.setGravity(Gravity.CENTER, 0, 0)
-        thetoast.show()
+        val theToast = Toast.makeText(historyLayout.context, R.string.nothing_toshare, Toast.LENGTH_SHORT)
+        theToast.setGravity(Gravity.CENTER, 0, 0)
+        theToast.show()
     }
 }
 
-fun biggerOrEqual(a: Int?, b: Int) = a?: b
+fun biggerOrEqual(a: Int, b: Int) = a >= b
 
 fun nulableString() {
     val a: String? = null

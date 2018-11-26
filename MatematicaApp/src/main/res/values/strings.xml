@@ -5,6 +5,7 @@
     <string name="ads_application_id" translatable="false">ca-app-pub-5891836101673362~4534736733</string>
     <string name="ads_publisher_id" translatable="false">pub-5891836101673362</string>
     <string name="privacy_policy_url" translatable="false">https://sergiocrz.wordpress.com/privacy-policy/</string>
+    <string name="playstore_url" translatable="false">market://details?id=com.sergiocruz.MatematicaPro</string>
 
 
     <string name="app_name" translatable="false">Primes Free</string>
@@ -12,17 +13,14 @@
 
     <string name="app_long_description">Prime Number Tools Free v</string>
     <string name="app_version_description">App version:</string>
-    <string name="app_version_date">February 2017</string>
+    <string name="app_version_date">November 2018</string>
 
     <string name="app_long_description_PRO" translatable="false">Prime Number Tools PRO</string>
 
-    <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
-    <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
-    <string name="openDrawer" translatable="false">open_drawer</string>
-    <string name="closeDrawer" translatable="false">close_drawer</string>
+    <string name="openDrawer">open_drawer</string>
+    <string name="closeDrawer">close_drawer</string>
 
     <!-- Navigation Drawer menu labels -->
-
     <string name="nav_home">Home</string>
     <string name="nav_mmc">LCM</string>
     <string name="nav_mdc">GCD</string>
@@ -183,7 +181,18 @@
     <string name="disabled">disabled</string>
     <string name="unknown">unknown</string>
     <string name="revoked">revoked</string>
-    <string name="playstore_url" translatable="false">market://details?id=com.sergiocruz.MatematicaPro</string>
+    <string name="app_icon_description">Primes APP Icon</string>
+    <string name="home_multiplos_description">▸ multiples - Calculate multiples of a number</string>
+    <string name="show_more">Show more ▸</string>
+    <string name="multpl_apresentar">Multiples to display</string>
+    <string name="action_share_history_images">Share table image</string>
+    <string name="action_save_history_image">Save table image</string>
+    <string name="empty_table">Empty table</string>
+    <string name="open_folder">Open folder</string>
+    <string name="application_title_image">Application Title image</string>
+    <string name="home_primality_description">▸ Primality Test\nVerify if a number is prime</string>
+    <string name="primality">Primality Test</string>
+
 
 
     <item name="texto" type="id"/>
